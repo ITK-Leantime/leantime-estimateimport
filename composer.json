@@ -1,0 +1,17 @@
+{
+    "name": "leantime/estimateimport",
+    "description": "Estimate import plugin",
+    "version": "1.0",
+    "authors": [
+        {
+            "name": "Jeppe Krogh",
+            "email": "kjej@aarhus.dk"
+        }
+    ],
+    "type": "leantime-plugin",
+    "license": "MIT",
+    "homepage": "https://github.com/itk-leantime/leantime-estimateimport",
+    "require": {
+        "leantime/leantime": "^3.0"
+    }
+}
