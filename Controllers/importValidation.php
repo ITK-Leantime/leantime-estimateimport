@@ -36,6 +36,8 @@ class ImportValidation extends Controller
      */
     public function get(): Response
     {
+        $this->importHelper->dataValidationCheck();
+
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
         $this->tpl->assign('importStyling', $importStyling);
@@ -97,7 +99,7 @@ class ImportValidation extends Controller
             $this->ticketService->addTicket($values);
         }
 
-
+        unset($_SESSION['csv_data']);
         header('Location: /projects/changeCurrentProject/' . $currentProject);
     }
 }

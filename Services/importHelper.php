@@ -107,4 +107,49 @@ class ImportHelper
 
         return $supportedFields;
     }
+
+    public function dataValidationCheck()
+    {
+        unset($_SESSION['csv_data']['warnings']);
+        unset($_SESSION['csv_data']['errors']);
+
+        $data = $_SESSION['csv_data']['data'];
+        $params = $_SESSION['csv_data']['mapping_data'];
+
+        foreach ($params as $key => $param) {
+            $key = str_replace('_', ' ', $key);
+            foreach ($data as $data_key => &$datum) {
+                if (trim($param) === '-1') {
+                    unset($datum[$key]);
+
+                    if (empty($datum)) {
+                        $_SESSION['csv_data']['warnings'][] = 'Ticket ' . $data_key . ': Was removed due to being empty.';
+                        unset($data[$data_key]);
+                    }
+                    continue;
+                }
+                if (empty($datum[$key])) {
+                    $_SESSION['csv_data']['warnings'][] = 'Ticket ' . $data_key . ': "' . $param . '" empty and was removed.';
+                    unset($datum[$key]);
+
+                    if (empty($datum)) {
+                        $_SESSION['csv_data']['warnings'][] = 'Ticket ' . $data_key . ': Was removed due to being empty.';
+                        unset($data[$data_key]);
+                        continue;
+                    }
+                }
+                if ($param === 'milestoneid') {
+                    if (empty($datum[$key])) {
+                        continue;
+                    }
+                    $exists = $this->checkMilestoneExist($datum[$key]);
+                    if (!$exists) {
+                        $_SESSION['csv_data']['errors']['Milestone'][$datum[$key]] = 'The following milestone does not exist: ';
+                    }
+                }
+            }
+        }
+        $_SESSION['csv_data']['mappings'] = $params;
+        $_SESSION['csv_data']['result'] = $data;
+    }
 }
