@@ -8,18 +8,18 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 /**
  * TimeTable Repository
  */
-class ImportSettings {
-
+class ImportSettings
+{
     /**
    * constructor
    *
    * @access public
    *
    */
-  public function __construct(
-    private readonly ProjectRepository $projectRepository,
-  ) {
-  }
+    public function __construct(
+        private readonly ProjectRepository $projectRepository,
+    ) {
+    }
 
   /**
    * getAllProjects from timesheet repository class
@@ -27,17 +27,17 @@ class ImportSettings {
    * @return array
    * @throws BindingResolutionException
    */
-  public function getAllProjectIds(): array {
-    $projectRepository = app()->make(ProjectRepository::class);
-    $projectData = $projectRepository->getAll();
-    $filteredData = [];
-    foreach ($projectData as $projectDatum) {
-        $filteredData[] = [
+    public function getAllProjectIds(): array
+    {
+        $projectRepository = app()->make(ProjectRepository::class);
+        $projectData = $projectRepository->getAll();
+        $filteredData = [];
+        foreach ($projectData as $projectDatum) {
+            $filteredData[] = [
             'id' => $projectDatum['id'],
-            'name' => $projectDatum['name']
-        ];
+            'name' => $projectDatum['name'],
+            ];
+        }
+        return $filteredData;
     }
-    return $filteredData;
-
-  }
 }

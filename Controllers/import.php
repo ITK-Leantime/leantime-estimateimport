@@ -5,9 +5,11 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Import class
+ */
 class Import extends Controller
 {
-
     /**
      * get
      *
@@ -19,13 +21,13 @@ class Import extends Controller
     {
         unset($_SESSION['csv_data']);
 
-        $importStyling = dirname(dirname($_SERVER["DOCUMENT_ROOT"])) . "dist/css/plugin-EstimateImport.css";
-        $importScript = dirname(dirname($_SERVER["DOCUMENT_ROOT"])) . "dist/js/plugin-EstimateImport.js";
-        $this->tpl->assign("importStyling", $importStyling);
-        $this->tpl->assign("importScript", $importScript);
+        $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
+        $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
+        $this->tpl->assign('importStyling', $importStyling);
+        $this->tpl->assign('importScript', $importScript);
 
 
-        return $this->tpl->display("EstimateImport.import");
+        return $this->tpl->display('EstimateImport.import');
     }
 
     /**
@@ -38,10 +40,10 @@ class Import extends Controller
     {
         $fileEncoding = $params['fileEncoding'];
 
-        $estimateFile = fopen($_FILES['estimateFile']["tmp_name"], 'r, ' . $fileEncoding);
+        $estimateFile = fopen($_FILES['estimateFile']['tmp_name'], 'r, ' . $fileEncoding);
 
         if (!$estimateFile) {
-            die("Unable to open file.");
+            die('Unable to open file.');
         }
 
         $csvData = array();
@@ -56,6 +58,6 @@ class Import extends Controller
 
         $_SESSION['csv_data'] = $csvData;
 
-        header("Location: /EstimateImport/importSettings");
+        header('Location: /EstimateImport/importSettings');
     }
 }
