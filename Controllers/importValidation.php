@@ -81,7 +81,7 @@ class ImportValidation extends Controller
 
                 // If milestone is mapped, get and set id if exists. Else do not set.
                 if ($mappings[$key] === 'milestoneid') {
-                    $milestoneId = $this->importHelper->checkMilestoneExist($dat);
+                    $milestoneId = $this->importHelper->checkMilestoneExist($dat, true);
                     if ($milestoneId) {
                         $values['milestoneid'] = $milestoneId;
                     }

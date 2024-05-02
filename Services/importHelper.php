@@ -29,9 +29,9 @@ class ImportHelper
      * @return array
      *
      */
-    private function getProjectMilestones(): array
+    private function getProjectMilestones(bool $update = false): array
     {
-        if (!isset($this->projectMilestones)) {
+        if (!isset($this->projectMilestones) || $update) {
             $this->setProjectMilestones();
         }
         return $this->projectMilestones;
@@ -64,9 +64,9 @@ class ImportHelper
      * @return array
      *
      */
-    public function checkMilestoneExist($milestone): bool|string
+    public function checkMilestoneExist($milestone, bool $update = false): bool|string
     {
-        $milestones = $this->getProjectMilestones();
+        $milestones = $this->getProjectMilestones($update);
 
         return array_reduce($milestones, function ($carry, $item) use ($milestone) {
             return ($item['headline'] === $milestone) ? $item['id'] : false;
