@@ -8,10 +8,6 @@ Download a release from
 <https://github.com/ITK-Leantime/leantime-estimateimport/releases> and extract into
 your Leantime plugins folder, e.g.
 
-``` shell
-# curl --silent --location https://github.com/ITK-Leantime/leantime-dataexport/releases/download/0.0.2/leantime-dataexport-0.0.2.tar.gz | tar xv
-```
-
 Install and enable the plugin:
 
 ``` shell
@@ -28,7 +24,7 @@ N/A
 Clone this repository into your Leantime plugins folder:
 
 ``` shell
-git clone https://github.com/ITK-Leantime/leantime-estimateimport app/Plugins/DataExport
+git clone https://github.com/ITK-Leantime/leantime-estimateimport app/Plugins/EstimateImport
 ```
 
 Install plugin dependencies:
@@ -41,8 +37,8 @@ docker run --tty --interactive --rm --env COMPOSER=composer-plugin.json --volume
 Install and enable the plugin:
 
 ``` shell
-bin/leantime plugin:install leantime/dataexport --no-interaction
-bin/leantime plugin:enable leantime/dataexport --no-interaction
+bin/leantime plugin:install leantime/estimateimport --no-interaction
+bin/leantime plugin:enable leantime/estimateimport --no-interaction
 ```
 
 ### Coding standards
