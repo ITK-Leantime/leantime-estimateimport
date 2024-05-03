@@ -1,6 +1,5 @@
 vendor-plugin
 node_modules
 yarn.lock
-leantime-dataexport-*.tar.gz
 checksum.txt
 .DS_Store

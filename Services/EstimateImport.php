@@ -3,7 +3,7 @@
 namespace Leantime\Plugins\EstimateImport\Services;
 
 /**
- * DataExport plugin.
+ * EstimateImport plugin.
  */
 class EstimateImport
 {
