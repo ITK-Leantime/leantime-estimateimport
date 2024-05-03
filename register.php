@@ -9,7 +9,18 @@ use Leantime\Core\Events;
 */
 function addImportDataMenuPoint(array $menuStructure): array
 {
-    $menuStructure['default'][60] = ['type' => 'item', 'module' => 'pluginTemplate', 'title' => 'Importer To-Dos', 'icon' => 'fa', 'tooltip' => 'Generate Fixture Data', 'href' => '/EstimateImport/import', 'active' => ['settings']];
+    $menuStructure['default'][10]['submenu'][59] = [
+        'type' => 'item',
+        'module' => 'tickets',
+        'title' => '<span class="fas fa-fw fa-file-import"></span> Import To-Do\'s',
+        'icon' => 'fa fa-fw fa-thumb-tack',
+        'tooltip' => 'Import To-Do\'s (CSV)',
+        'href' => '/EstimateImport/import',
+        'active' => ['settings']
+    ];
+
+    // Remove annoying Whiteboard ad
+    unset($menuStructure['default'][10]['submenu'][60]);
     return $menuStructure;
 }
 
