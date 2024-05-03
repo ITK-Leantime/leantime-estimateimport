@@ -6,9 +6,9 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
 /**
- * TimeTable Repository
+ * Import Repository
  */
-class ImportSettings
+class Import
 {
     /**
    * constructor

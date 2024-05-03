@@ -5,24 +5,24 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-use Leantime\Plugins\EstimateImport\Repositories\ImportSettings as ImportSettingsRepository;
+use Leantime\Plugins\EstimateImport\Repositories\Import as ImportRepository;
 
 /**
  * Import class
  */
 class Import extends Controller
 {
-    private ImportSettingsRepository $importSettingsRepo;
+    private ImportRepository $importRepository;
 
   /**
    * constructor
    *
-   * @param ImportSettingsRepository $importSettingsRepo
+   * @param ImportRepository $importRepository
    * @return void
    */
-    public function init(ImportSettingsRepository $importSettingsRepo)
+    public function init(ImportRepository $importRepository)
     {
-        $this->importSettingsRepo = $importSettingsRepo;
+        $this->importRepository = $importRepository;
     }
     /**
      * get
@@ -40,7 +40,7 @@ class Import extends Controller
         $this->tpl->assign('importStyling', $importStyling);
         $this->tpl->assign('importScript', $importScript);
 
-        $projectData = $this->importSettingsRepo->getAllProjectIds();
+        $projectData = $this->importRepository->getAllProjectIds();
         $this->tpl->assign('currentProject', $_SESSION['currentProject']);
         $this->tpl->assign('projectData', $projectData);
 

@@ -139,6 +139,7 @@ class ImportHelper
 
         $data = $_SESSION['csv_data']['data'];
         $params = $_SESSION['csv_data']['mapping_data'];
+        $supportedFields = $this->getSupportedFields();
 
         foreach ($params as $key => $param) {
             $key = str_replace('_', ' ', $key);
@@ -153,7 +154,7 @@ class ImportHelper
                     continue;
                 }
                 if (empty($datum[$key])) {
-                    $_SESSION['csv_data']['warnings'][] = 'Ticket ' . $data_key . ': "' . $param . '" empty and was removed.';
+                    $_SESSION['csv_data']['warnings'][] = 'Ticket ' . $data_key . ': "' . $supportedFields[$param]['name'] . '" empty and was removed.';
                     unset($datum[$key]);
 
                     if (empty($datum)) {
