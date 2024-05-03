@@ -9,7 +9,7 @@ use Leantime\Core\Events;
 */
 function addImportDataMenuPoint(array $menuStructure): array
 {
-    $menuStructure['default'][10]['submenu'][59] = [
+    $menuStructure['default'][10]['submenu'][60] = [
         'type' => 'item',
         'module' => 'tickets',
         'title' => '<span class="fas fa-fw fa-file-import"></span> Import To-Do\'s',
@@ -19,8 +19,6 @@ function addImportDataMenuPoint(array $menuStructure): array
         'active' => ['settings']
     ];
 
-    // Remove annoying Whiteboard ad
-    unset($menuStructure['default'][10]['submenu'][60]);
     return $menuStructure;
 }
 
