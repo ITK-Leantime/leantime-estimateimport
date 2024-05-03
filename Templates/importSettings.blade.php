@@ -41,8 +41,9 @@
 
             <div class="form-group">
                 <label for="dateFormat">Date format</label>
-                <input name="dateFormat" type="text" required placeholder="Date format" value="dd/MMM/yy HH:mm" />
-                <p>(e.g. dd/MMM/yy h:mm a) <br /> Please specify the format that dates are stored in the CSV file. Please use syntax valid for <a href="https://docs.oracle.com/javase/1.5.0/docs/api/java/text/SimpleDateFormat.html" target="_blank">SimpleDateFormat</a>.</p>
+                <input name="dateFormat" type="text" required placeholder="Date format" value="d/m/Y" />
+                <p>ex. (d/m/Y ~ 03/05/2024)</p>
+                <p>Please specify the format that dates are stored in the CSV file. <a href="https://www.w3schools.com/php/func_date_date.asp" target="_blank">Syntax examples</a></p>
             </div>
 
             <br />

@@ -2,6 +2,7 @@
 
 namespace Leantime\Plugins\EstimateImport\Services;
 
+use DateTime;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
@@ -67,10 +68,17 @@ class ImportHelper
     public function checkMilestoneExist($milestone, bool $update = false): bool|string
     {
         $milestones = $this->getProjectMilestones($update);
-
         return array_reduce($milestones, function ($carry, $item) use ($milestone) {
-            return ($item['headline'] === $milestone) ? $item['id'] : false;
+            return $carry !== false ? $carry : ($item['headline'] === $milestone ? $item['id'] : false);
         }, false);
+    }
+
+    public function addMilestone($milestone): array|bool|int
+    {
+        $params = array(
+            "headline" => $milestone,
+        );
+        return $this->ticketService->quickAddMilestone($params);
     }
 
 /**
@@ -102,6 +110,10 @@ class ImportHelper
                 'name' => 'Planlagte timer',
                 'help' => 'Mapping this will also set "Hours left" as the same value to save you time.',
             ),
+            'dateToFinish' => array(
+                'name' => 'Due Date',
+                'help' => '',
+            )
         );
 
 
@@ -142,14 +154,33 @@ class ImportHelper
                     if (empty($datum[$key])) {
                         continue;
                     }
-                    $exists = $this->checkMilestoneExist($datum[$key]);
+                    $exists = $this->checkMilestoneExist($datum[$key], true);
                     if (!$exists) {
                         $_SESSION['csv_data']['errors']['Milestone'][$datum[$key]] = 'The following milestone does not exist: ';
                     }
                 }
+                if ($param === 'dateToFinish') {
+                    if (empty($datum[$key])) {
+                        continue;
+                    }
+                    $dateFormat = $_SESSION['csv_data']['date_format'];
+                    $dateValid = $this->validateDate($datum[$key], $dateFormat);
+                    if (!$dateValid) {
+                        $_SESSION['csv_data']['errors']['DueDate'][$datum[$key]] = 'The following DueDate is not in the format '.$dateFormat.': ';
+                    }
+                }
+
             }
         }
         $_SESSION['csv_data']['mappings'] = $params;
         $_SESSION['csv_data']['result'] = $data;
     }
+
+    private function validateDate($date, $format = 'Y-m-d')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+    return $d && $d->format($format) === $date;
+}
+
 }

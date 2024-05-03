@@ -36,6 +36,9 @@ class ImportValidation extends Controller
      */
     public function get(): Response
     {
+        if ($_GET['fixErrors']) {
+            $this->fixErrors($_GET['fixErrors']);
+        }
         $this->importHelper->dataValidationCheck();
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
@@ -64,6 +67,27 @@ class ImportValidation extends Controller
         return $this->tpl->display('EstimateImport.importValidation');
     }
 
+
+    public function fixErrors($subject) {
+        switch($subject) {
+            case "Milestone":
+                $milestonesToCreate = $_SESSION['csv_data']['errors'][$subject];
+                $result = array();
+                foreach($milestonesToCreate as $milestone => $errorMessage) {
+                    $milestoneExists = $this->importHelper->checkMilestoneExist($milestone, true);
+                    if (!$milestoneExists) {
+                        $milestoneAdded = $this->importHelper->addMilestone($milestone);
+                        $result[$milestone] = $milestoneAdded;
+                    }
+                }
+                die(json_encode($result));
+            break;
+            default:
+                die('not implemented');
+            break;
+        }
+
+    }
     /**
      * post
      *
@@ -76,26 +100,41 @@ class ImportValidation extends Controller
         $dataToImport = $_SESSION['csv_data']['result'];
         $currentProject = $_SESSION['currentProject'];
 
-        foreach ($dataToImport as $datumToImport) {
+        foreach ($dataToImport as $count => $datumToImport) {
+            echo $count;
             $values = array();
             foreach ($datumToImport as $key => $dat) {
                 $key = str_replace(' ', '_', $key);
 
-                // If milestone is mapped, get and set id if exists. Else do not set.
-                if ($mappings[$key] === 'milestoneid') {
-                    $milestoneId = $this->importHelper->checkMilestoneExist($dat, true);
-                    if ($milestoneId) {
-                        $values['milestoneid'] = $milestoneId;
-                    }
-                } else {
-                    $values[$mappings[$key]] = $dat ?? '';
+                switch($mappings[$key]) {
+                    // If milestone is mapped, get and set id if exists. Else do not set.
+                    case "milestoneid":
+                        $milestoneId = $this->importHelper->checkMilestoneExist($dat, true);
+                        if ($milestoneId) {
+                            $values['milestoneid'] = $milestoneId;
+                        }
+                    break;
+                    case "planHours":
+                        $values[$mappings[$key]] = str_replace(',', '.', $dat); // Convert comma to punctuation
+                        $values[$mappings[$key]] = str_replace(',', '.', $dat); // Set hourRemaining aswell as it is not set automatically.
+                    break;
+                    // If dateToFinish is mapped, convert date from known format to db format.
+                    case "dateToFinish":
+                        $dateFormat = $_SESSION['csv_data']['date_format'];
+                        $date = \DateTime::createFromFormat($dateFormat, $dat);
+
+                        // Because of Leantimes internal "date database preparation", dates has to be formatted like datetimehelper expects
+                        $leantimeUserDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__("language.dateformat");
+                        $values[$mappings[$key]] = $date->format($leantimeUserDateFormat) ?? '';
+                    break;
+                    default:
+                        $values[$mappings[$key]] = $dat ?? '';
+                    break;
                 }
 
                 $values['status'] = '3'; // Status "3" is "New"
                 $values['currentProject'] = $currentProject; // Current project id gathered from entry point (project dashboard).
             }
-            $values['planHours'] = str_replace(',', '.', $values['planHours']); // Convert comma to punctuation
-            $values['hourRemaining'] = str_replace(',', '.', $values['planHours']); // Set hourRemaining aswell as it is not set automatically.
             $this->ticketService->addTicket($values);
         }
 

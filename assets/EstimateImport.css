@@ -118,3 +118,9 @@ h1 {
   white-space: pre;
   white-space: nowrap;
 }
+.validation-error-headline {
+  display: flex;
+}
+.validation-error-headline > h3 {
+  margin: auto 15px auto 0;
+}
