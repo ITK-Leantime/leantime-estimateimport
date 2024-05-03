@@ -86,6 +86,7 @@ class ImportSettings extends Controller
 
         $_SESSION['csv_data']['headers'] = $estimateDataHeaders;
         $_SESSION['csv_data']['project_id'] = $params['projectId'];
+        $_SESSION['csv_data']['date_format'] = $params['dateFormat'];
 
         header('Location: /EstimateImport/importMapping');
     }
