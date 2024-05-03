@@ -73,10 +73,16 @@ class ImportHelper
         }, false);
     }
 
+     /**
+     * Adds a given milestone
+     *
+     * @return array
+     *
+     */
     public function addMilestone($milestone): array|bool|int
     {
         $params = array(
-            "headline" => $milestone,
+            'headline' => $milestone,
         );
         return $this->ticketService->quickAddMilestone($params);
     }
@@ -113,14 +119,20 @@ class ImportHelper
             'dateToFinish' => array(
                 'name' => 'Due Date',
                 'help' => '',
-            )
+            ),
         );
 
 
         return $supportedFields;
     }
 
-    public function dataValidationCheck()
+    /**
+     * Validated the mapped data. Eventually sets warnings and errors
+     *
+     * @return void
+     *
+     */
+    public function dataValidationCheck(): void
     {
         unset($_SESSION['csv_data']['warnings']);
         unset($_SESSION['csv_data']['errors']);
@@ -166,21 +178,25 @@ class ImportHelper
                     $dateFormat = $_SESSION['csv_data']['date_format'];
                     $dateValid = $this->validateDate($datum[$key], $dateFormat);
                     if (!$dateValid) {
-                        $_SESSION['csv_data']['errors']['DueDate'][$datum[$key]] = 'The following DueDate is not in the format '.$dateFormat.': ';
+                        $_SESSION['csv_data']['errors']['DueDate'][$datum[$key]] = 'The following DueDate is not in the format ' . $dateFormat . ': ';
                     }
                 }
-
             }
         }
         $_SESSION['csv_data']['mappings'] = $params;
         $_SESSION['csv_data']['result'] = $data;
     }
 
-    private function validateDate($date, $format = 'Y-m-d')
-{
-    $d = DateTime::createFromFormat($format, $date);
+    /**
+     * Validates a given date with a given format.
+     *
+     * @return bool
+     *
+     */
+    private function validateDate($date, $format = 'Y-m-d'): bool
+    {
+        $d = DateTime::createFromFormat($format, $date);
     // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
-    return $d && $d->format($format) === $date;
-}
-
+        return $d && $d->format($format) === $date;
+    }
 }

@@ -67,13 +67,19 @@ class ImportValidation extends Controller
         return $this->tpl->display('EstimateImport.importValidation');
     }
 
-
-    public function fixErrors($subject) {
-        switch($subject) {
-            case "Milestone":
+  /**
+     * Attempts to fix certain errors given in import validation
+     *
+     * @return void
+     *
+     */
+    public function fixErrors($subject)
+    {
+        switch ($subject) {
+            case 'Milestone':
                 $milestonesToCreate = $_SESSION['csv_data']['errors'][$subject];
                 $result = array();
-                foreach($milestonesToCreate as $milestone => $errorMessage) {
+                foreach ($milestonesToCreate as $milestone => $errorMessage) {
                     $milestoneExists = $this->importHelper->checkMilestoneExist($milestone, true);
                     if (!$milestoneExists) {
                         $milestoneAdded = $this->importHelper->addMilestone($milestone);
@@ -86,7 +92,6 @@ class ImportValidation extends Controller
                 die('not implemented');
             break;
         }
-
     }
     /**
      * post
@@ -106,30 +111,30 @@ class ImportValidation extends Controller
             foreach ($datumToImport as $key => $dat) {
                 $key = str_replace(' ', '_', $key);
 
-                switch($mappings[$key]) {
+                switch ($mappings[$key]) {
                     // If milestone is mapped, get and set id if exists. Else do not set.
-                    case "milestoneid":
+                    case 'milestoneid':
                         $milestoneId = $this->importHelper->checkMilestoneExist($dat, true);
                         if ($milestoneId) {
                             $values['milestoneid'] = $milestoneId;
                         }
-                    break;
-                    case "planHours":
+                        break;
+                    case 'planHours':
                         $values[$mappings[$key]] = str_replace(',', '.', $dat); // Convert comma to punctuation
                         $values[$mappings[$key]] = str_replace(',', '.', $dat); // Set hourRemaining aswell as it is not set automatically.
-                    break;
+                        break;
                     // If dateToFinish is mapped, convert date from known format to db format.
-                    case "dateToFinish":
+                    case 'dateToFinish':
                         $dateFormat = $_SESSION['csv_data']['date_format'];
                         $date = \DateTime::createFromFormat($dateFormat, $dat);
 
                         // Because of Leantimes internal "date database preparation", dates has to be formatted like datetimehelper expects
-                        $leantimeUserDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__("language.dateformat");
+                        $leantimeUserDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__('language.dateformat');
                         $values[$mappings[$key]] = $date->format($leantimeUserDateFormat) ?? '';
-                    break;
+                        break;
                     default:
                         $values[$mappings[$key]] = $dat ?? '';
-                    break;
+                        break;
                 }
 
                 $values['status'] = '3'; // Status "3" is "New"
