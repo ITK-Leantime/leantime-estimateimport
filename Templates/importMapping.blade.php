@@ -15,13 +15,10 @@
   <li class="step is-complete" data-step="1">
     Upload file
   </li>
-  <li class="step is-complete" data-step="2">
-    Settings
-  </li>
-  <li class="step is-active" data-step="3">
+  <li class="step is-active" data-step="2">
     Map fields
   </li>
-  <li class="step" data-step="4">
+  <li class="step" data-step="3">
     Review
   </li>
 </ol>

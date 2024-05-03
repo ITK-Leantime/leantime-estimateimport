@@ -5,11 +5,25 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
+use Leantime\Plugins\EstimateImport\Repositories\ImportSettings as ImportSettingsRepository;
+
 /**
  * Import class
  */
 class Import extends Controller
 {
+    private ImportSettingsRepository $importSettingsRepo;
+
+  /**
+   * constructor
+   *
+   * @param ImportSettingsRepository $importSettingsRepo
+   * @return void
+   */
+    public function init(ImportSettingsRepository $importSettingsRepo)
+    {
+        $this->importSettingsRepo = $importSettingsRepo;
+    }
     /**
      * get
      *
@@ -26,6 +40,9 @@ class Import extends Controller
         $this->tpl->assign('importStyling', $importStyling);
         $this->tpl->assign('importScript', $importScript);
 
+        $projectData = $this->importSettingsRepo->getAllProjectIds();
+        $this->tpl->assign('currentProject', $_SESSION['currentProject']);
+        $this->tpl->assign('projectData', $projectData);
 
         return $this->tpl->display('EstimateImport.import');
     }
@@ -46,18 +63,51 @@ class Import extends Controller
             die('Unable to open file.');
         }
 
-        $csvData = array();
+        $estimateData = array();
 
         $delimiter = $params['delimiter'];
 
         while (($row = fgetcsv($estimateFile, 0, $delimiter)) !== false) {
-            $csvData[] = $row;
+            $estimateData[] = $row;
         }
 
         fclose($estimateFile);
 
-        $_SESSION['csv_data'] = $csvData;
+        $estimateDataHeaders = array();
+        $estimateDataData = array();
+        foreach ($estimateData as $count => $row) {
+            if ($count === 0) {
+                $estimateDataHeaders = $row;
+            } else {
+                $estimateDataData[] = $row;
+            }
+        }
 
-        header('Location: /EstimateImport/importSettings');
+
+      // Replace numeric array keys with headers from data
+        $estimateDataResult = [];
+
+        foreach ($estimateDataData as $item) {
+            $temp = [];
+
+            foreach ($estimateDataHeaders as $i => $header) {
+                $header = trim($header);
+
+                if (!empty($header)) {
+                    $temp[$header] = $item[$i];
+                } else { // Remove entry if empty
+                    unset($temp[$header]);
+                }
+            }
+
+            $estimateDataResult[] = $temp;
+        }
+        $_SESSION['csv_data']['data'] = $estimateDataResult;
+
+        $_SESSION['csv_data']['headers'] = $estimateDataHeaders;
+        $_SESSION['csv_data']['project_id'] = $params['projectId'];
+        $_SESSION['csv_data']['date_format'] = $params['dateFormat'];
+
+        header('Location: /EstimateImport/importMapping');
     }
 }

@@ -14,15 +14,12 @@
 
     <ol class="steps">
   <li class="step is-active" data-step="1">
-    Upload file
+    Upload & Settings
   </li>
   <li class="step" data-step="2">
-    Settings
-  </li>
-  <li class="step" data-step="3">
     Map fields
   </li>
-  <li class="step" data-step="4">
+  <li class="step" data-step="3">
     Review
   </li>
 </ol>
@@ -39,6 +36,24 @@
             <div class="form-group">
                 <label for="delimiter">Delimiter</label>
                 <input required name="delimiter" type="text" required placeholder="Delimiter" value=";" />
+            </div>
+
+            <div class="form-group">
+                <label for="projectId">Project</label>
+                <select name="projectId">
+                    <?php
+                        foreach ($tpl->get('projectData') as $projectDatum) {
+                            echo "<option " . ($projectDatum['id'] === $tpl->get('currentProject') ? 'selected' : '') . "  value='" . $projectDatum['id'] . "'>" . $projectDatum['name'] . "</option>";
+                        }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dateFormat">Date format</label>
+                <input name="dateFormat" type="text" required placeholder="Date format" value="d/m/Y" />
+                <p>ex. (d/m/Y ~ 03/05/2024)</p>
+                <p>Please specify the format that dates are stored in the CSV file. <a href="https://www.w3schools.com/php/func_date_date.asp" target="_blank">Syntax examples</a></p>
             </div>
 
         <br />

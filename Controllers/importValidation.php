@@ -144,6 +144,6 @@ class ImportValidation extends Controller
         }
 
         unset($_SESSION['csv_data']);
-        header('Location: /projects/changeCurrentProject/' . $currentProject);
+        header('Location: /projects/changeCurrentProject/' . $currentProject."?estimateImportSuccess=1");
     }
 }
