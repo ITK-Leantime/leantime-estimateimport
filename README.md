@@ -1,6 +1,8 @@
 # Estimate import
 
-Estimate import plugin for Leantime
+Estimate import plugin for Leantime.
+
+Allows .csv files to be imported into the system and tickets to be created from the imported data, automating this process.
 
 ## Installation
 
