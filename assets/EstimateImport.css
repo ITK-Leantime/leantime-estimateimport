@@ -157,7 +157,7 @@ h1 {
   font-size: 18px;
   color: #000;
 }
-.ticket-header > input{
+.ticket-header > input {
   margin: auto 10px auto 10px;
 }
 label[for="dataValidated"] {
