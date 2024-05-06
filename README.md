@@ -29,7 +29,6 @@ Clone this repository into your Leantime plugins folder:
 git clone https://github.com/ITK-Leantime/leantime-estimateimport app/Plugins/EstimateImport
 ```
 
-
 Install and enable the plugin:
 
 ``` shell
