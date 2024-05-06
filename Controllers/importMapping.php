@@ -56,7 +56,10 @@ class ImportMapping extends Controller
    */
     public function post(array $params): void
     {
+        // Save mapping data to session
         $_SESSION['csv_data']['mapping_data'] = $params;
+
+        // Redirect to next step
         header('Location: /EstimateImport/importValidation');
     }
 }

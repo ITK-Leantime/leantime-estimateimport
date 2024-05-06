@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="<?php echo $tpl->get('importStyling') ?>" />
 <script type="module" src="<?php echo $tpl->get('importScript') ?>"></script>
 
-<div class="maincontent">
+<div class="estimateimport-content maincontent">
     <?php echo $tpl->displayNotification(); ?>
     <?php
 $mappings = $tpl->get('mappings');
@@ -58,10 +58,10 @@ if (!empty($validationErrors)) {
 
 echo "</br></br>";
 foreach ($tpl->get('dataToValidate') as $count => $dataToValidate) {
-  echo "<h3>Ticket " . $count . "</h3>";
+  echo "<div class='ticket-header'><label for='field-".$count."'>Ticket " . ($count+1) . "</label><input id='field-".$count."' type='checkbox' checked name='dataImportConfirmation[]' value='".$count."' /></div>";
   foreach ($dataToValidate as $field => $datumToValidate) {
     $field = str_replace(' ', '_', $field);
-    echo "<p data-hest='" . $field . "'>" . $supportedFields[$mappings[$field]]["name"] . " -> " . $datumToValidate . "</p>";
+    echo "<div class='ticket-content' data-hest='" . $field . "'><span>" . $supportedFields[$mappings[$field]]["name"] . "</span> <i class='fa-solid fa-arrow-right'></i> <span>" . $datumToValidate . "</span></div>";
 
   }
   echo "<br />";
@@ -69,7 +69,7 @@ foreach ($tpl->get('dataToValidate') as $count => $dataToValidate) {
         ?>
 
             <div class="form-group">
-                <label for="dataValidated"><input id="dataValidated" type="checkbox" name="dataValidated" /> Jeg er sikker på at data er korrekt mappet, og vil gerne importere det i Leantime.</label>
+                <label for="dataValidated"><input id="dataValidated" type="checkbox" name="dataValidated" /> <span>Jeg er sikker på at data er korrekt mappet, og vil gerne importere det i Leantime.</span></label>
             </div>
             <br />
 

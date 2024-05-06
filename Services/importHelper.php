@@ -127,7 +127,7 @@ class ImportHelper
     }
 
     /**
-     * Validated the mapped data. Eventually sets warnings and errors
+     * Validated the mapped data. Eventually sets warnings and errors in session
      *
      * @return void
      *
@@ -141,8 +141,11 @@ class ImportHelper
         $params = $_SESSION['csv_data']['mapping_data'];
         $supportedFields = $this->getSupportedFields();
 
+        // Loop field mapping
         foreach ($params as $key => $param) {
             $key = str_replace('_', ' ', $key);
+
+            // Loop data and match fields names
             foreach ($data as $data_key => &$datum) {
                 if (trim($param) === '-1') {
                     unset($datum[$key]);

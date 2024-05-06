@@ -36,9 +36,12 @@ class ImportValidation extends Controller
      */
     public function get(): Response
     {
+        // Javascript fixErrors hook
         if ($_GET['fixErrors']) {
             $this->fixErrors($_GET['fixErrors']);
         }
+
+        // Check data validitity
         $this->importHelper->dataValidationCheck();
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
@@ -46,53 +49,29 @@ class ImportValidation extends Controller
         $this->tpl->assign('importStyling', $importStyling);
         $this->tpl->assign('importScript', $importScript);
 
+        // Get supported fields to display human-friendly field names
         $supportedFields = $this->importHelper->getSupportedFields();
         $this->tpl->assign('supportedFields', $supportedFields);
 
+        // Data to display
         $dataToValidate = $_SESSION['csv_data']['result'];
         $this->tpl->assign('dataToValidate', $dataToValidate);
 
+        // Previously mapped fields
         $mappings = $_SESSION['csv_data']['mappings'];
         $this->tpl->assign('mappings', $mappings);
 
-        $milestones = $_SESSION['csv_data']['milestones'];
-        $this->tpl->assign('milestones', $milestones);
-
+        // Warnings gathered in dataValidationCheck
         $validationWarnings = $_SESSION['csv_data']['warnings'];
         $this->tpl->assign('validationWarnings', $validationWarnings);
 
+        // Errors gathered in dataValidationCheck
         $validationErrors = $_SESSION['csv_data']['errors'];
         $this->tpl->assign('validationErrors', $validationErrors);
 
         return $this->tpl->display('EstimateImport.importValidation');
     }
 
-  /**
-     * Attempts to fix certain errors given in import validation
-     *
-     * @return void
-     *
-     */
-    public function fixErrors($subject)
-    {
-        switch ($subject) {
-            case 'Milestone':
-                $milestonesToCreate = $_SESSION['csv_data']['errors'][$subject];
-                $result = array();
-                foreach ($milestonesToCreate as $milestone => $errorMessage) {
-                    $milestoneExists = $this->importHelper->checkMilestoneExist($milestone, true);
-                    if (!$milestoneExists) {
-                        $milestoneAdded = $this->importHelper->addMilestone($milestone);
-                        $result[$milestone] = $milestoneAdded;
-                    }
-                }
-                die(json_encode($result));
-            break;
-            default:
-                die('not implemented');
-            break;
-        }
-    }
     /**
      * post
      *
@@ -104,9 +83,12 @@ class ImportValidation extends Controller
         $mappings = $_SESSION['csv_data']['mappings'];
         $dataToImport = $_SESSION['csv_data']['result'];
         $currentProject = $_SESSION['currentProject'];
+        $dataImportConfirmation = $params['dataImportConfirmation'];
 
         foreach ($dataToImport as $count => $datumToImport) {
-            echo $count;
+            if (!in_array($count, $dataImportConfirmation)) {
+                continue;
+            }
             $values = array();
             foreach ($datumToImport as $key => $dat) {
                 $key = str_replace(' ', '_', $key);
@@ -145,5 +127,32 @@ class ImportValidation extends Controller
 
         unset($_SESSION['csv_data']);
         header('Location: /projects/changeCurrentProject/' . $currentProject."?estimateImportSuccess=1");
+    }
+
+     /**
+     * Attempts to fix certain errors given in import validation
+     *
+     * @return void
+     *
+     */
+    public function fixErrors($subject)
+    {
+        switch ($subject) {
+            case 'Milestone':
+                $milestonesToCreate = $_SESSION['csv_data']['errors'][$subject];
+                $result = array();
+                foreach ($milestonesToCreate as $milestone => $errorMessage) {
+                    $milestoneExists = $this->importHelper->checkMilestoneExist($milestone, true);
+                    if (!$milestoneExists) {
+                        $milestoneAdded = $this->importHelper->addMilestone($milestone);
+                        $result[$milestone] = $milestoneAdded;
+                    }
+                }
+                die(json_encode($result));
+            break;
+            default:
+                die('not implemented');
+            break;
+        }
     }
 }

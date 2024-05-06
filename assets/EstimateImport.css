@@ -1,3 +1,6 @@
+.estimateimport-content * {
+  user-select: none;
+}
 .steps {
   list-style: none;
   margin: 0;
@@ -123,4 +126,46 @@ h1 {
 }
 .validation-error-headline > h3 {
   margin: auto 15px auto 0;
+}
+
+.ticket-content {
+  display: flex;
+  margin: 10px 0;
+}
+.ticket-content > span {
+  font-size: 15px;
+  margin: auto 0;
+}
+.ticket-content > span:first-child {
+  font-weight: bold;
+  width: 200px;
+}
+.ticket-content > span:last-child {
+  width: 200px;
+}
+
+.ticket-content > i {
+  margin: auto 50px;
+}
+
+.ticket-header {
+  display: flex;
+}
+.ticket-header > label {
+  margin: auto 0;
+  padding: 0;
+  font-size: 18px;
+  color: #000;
+}
+.ticket-header > input{
+  margin: auto 10px auto 10px;
+}
+label[for="dataValidated"] {
+  display: flex;
+}
+label[for="dataValidated"] > input {
+  margin: auto 5px auto 0;
+}
+label[for="dataValidated"] > span {
+  color: #000;
 }

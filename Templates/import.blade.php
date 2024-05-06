@@ -8,7 +8,7 @@
 <link rel="stylesheet"  href="<?php echo $tpl->get('importStyling') ?>" />
 <script type="module" src="<?php echo $tpl->get('importScript') ?>"></script>
 
-<div class="maincontent">
+<div class="estimateimport-content maincontent">
 <?php echo $tpl->displayNotification(); ?>
     <div class="maincontentinner">
 
