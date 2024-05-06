@@ -4,6 +4,7 @@ namespace Leantime\Plugins\EstimateImport\Services;
 
 use DateTime;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
 /**
  * ImportHelper class
@@ -11,17 +12,20 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 class ImportHelper
 {
     private TicketService $ticketService;
+    private ProjectService $projectService;
     private $projectMilestones;
 
     /**
      * constructor
      *
      * @param TicketService $ticketService
+     * @param ProjectService $projectService
      * @return void
      */
-    public function __construct(TicketService $ticketService)
+    public function __construct(TicketService $ticketService, ProjectService $projectService)
     {
         $this->ticketService = $ticketService;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -203,4 +207,23 @@ class ImportHelper
     // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
         return $d && $d->format($format) === $date;
     }
+
+      /**
+   * getAllProjects from timesheet repository
+   *
+   * @return array
+   * @throws BindingResolutionException
+   */
+  public function getAllProjectIds(): array
+  {
+      $projectData = $this->projectService->getAll();
+      $filteredData = [];
+      foreach ($projectData as $projectDatum) {
+          $filteredData[] = [
+          'id' => $projectDatum['id'],
+          'name' => $projectDatum['name'],
+          ];
+      }
+      return $filteredData;
+  }
 }

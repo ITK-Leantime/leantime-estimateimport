@@ -5,22 +5,22 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-use Leantime\Plugins\EstimateImport\Repositories\Import as ImportRepository;
+use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 
 /**
  * Import class
  */
 class Import extends Controller {
-  private ImportRepository $importRepository;
+  private ImportHelper $importHelper;
 
   /**
    * constructor
    *
-   * @param ImportRepository $importRepository
+   * @param ImportHelper $importHelper
    * @return void
    */
-  public function init(ImportRepository $importRepository) {
-    $this->importRepository = $importRepository;
+  public function init(ImportHelper $importHelper) {
+    $this->importHelper = $importHelper;
   }
   /**
    * get
@@ -37,7 +37,7 @@ class Import extends Controller {
     $this->tpl->assign('importStyling', $importStyling);
     $this->tpl->assign('importScript', $importScript);
 
-    $projectData = $this->importRepository->getAllProjectIds();
+    $projectData = $this->importHelper->getAllProjectIds();
     $this->tpl->assign('currentProject', $_SESSION['currentProject']);
     $this->tpl->assign('projectData', $projectData);
 
