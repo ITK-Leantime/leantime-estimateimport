@@ -13,7 +13,7 @@ fi
 
 cd "$project_dir"
 
-plugin_name=DataExport
+plugin_name=EstimateImport
 name="leantime-plugin-${plugin_name}-${tag}.tar.gz"
 
 # Make sure that `composer.json` has the correct version.
