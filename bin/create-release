@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -o errexit -o errtrace -o noclobber -o nounset -o pipefail
+IFS=$'\n\t'
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+project_dir=$(cd "$(dirname "$script_dir")" && pwd)
+
+tag=${1:-}
+if [ -z "$tag" ]; then
+  (>&2 echo "Usage: $0 tag")
+  exit
+fi
+
+cd "$project_dir"
+
+plugin_name=DataExport
+name="leantime-plugin-${plugin_name}-${tag}.tar.gz"
+
+# Make sure that `composer.json` has the correct version.
+composer config version "${tag}"
+composer install --no-dev
+
+tar --create --file "$name" --exclude-vcs --exclude-from="$script_dir/build-exclude.txt" --transform "s/^\./$plugin_name/" .
+sha256sum "$name" >| checksum.txt

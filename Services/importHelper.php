@@ -18,7 +18,7 @@ class ImportHelper
     /**
      * constructor
      *
-     * @param TicketService $ticketService
+     * @param TicketService  $ticketService
      * @param ProjectService $projectService
      * @return void
      */
@@ -214,16 +214,16 @@ class ImportHelper
    * @return array
    * @throws BindingResolutionException
    */
-  public function getAllProjectIds(): array
-  {
-      $projectData = $this->projectService->getAll();
-      $filteredData = [];
-      foreach ($projectData as $projectDatum) {
-          $filteredData[] = [
-          'id' => $projectDatum['id'],
-          'name' => $projectDatum['name'],
-          ];
-      }
-      return $filteredData;
-  }
+    public function getAllProjectIds(): array
+    {
+        $projectData = $this->projectService->getAll();
+        $filteredData = [];
+        foreach ($projectData as $projectDatum) {
+            $filteredData[] = [
+            'id' => $projectDatum['id'],
+            'name' => $projectDatum['name'],
+            ];
+        }
+        return $filteredData;
+    }
 }

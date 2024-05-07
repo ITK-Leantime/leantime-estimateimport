@@ -1,5 +1,11 @@
-vendor-plugin
+composer.lock
+vendor
 node_modules
-yarn.lock
-checksum.txt
+dist
 .DS_Store
+
+*.cache
+
+# Release
+leantime-plugin-*.tar.gz
+checksum.txt

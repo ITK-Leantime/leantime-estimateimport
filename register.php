@@ -16,7 +16,7 @@ function addImportDataMenuPoint(array $menuStructure): array
         'icon' => 'fa fa-fw fa-thumb-tack',
         'tooltip' => 'Import To-Do\'s (CSV)',
         'href' => '/EstimateImport/import',
-        'active' => ['settings']
+        'active' => ['settings'],
     ];
 
     return $menuStructure;

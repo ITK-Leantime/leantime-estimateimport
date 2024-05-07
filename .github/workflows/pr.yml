@@ -16,6 +16,19 @@ jobs:
       - name: Check that changelog has been updated.
         run: git diff --exit-code origin/${{ github.base_ref }} -- CHANGELOG.md && exit 1 || exit 0
 
+  check-build-release:
+    runs-on: ubuntu-latest
+    name: Test create release
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create test release
+        run: |
+          ./bin/create-release dev-test
+
   assets-coding-standards:
     name: Assets coding standards
     runs-on: ubuntu-latest
@@ -39,3 +52,36 @@ jobs:
         run: |
           docker run --rm --volume ${PWD}:/app node:20 yarn --cwd /app install
           docker run --rm --volume ${PWD}:/app node:20 yarn --cwd /app coding-standards-check/markdownlint
+
+  composer-normalize:
+    name: composer-normalize
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@master
+      - run: |
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer normalize
+
+  coding-standards-phpcs:
+    name: coding-standards-check/phpcs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@master
+      - run: |
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer coding-standards-check/phpcs
+
+  code-analysis-phpstan:
+    name: code-analysis/phpstan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@master
+      - run: |
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer code-analysis/phpstan
