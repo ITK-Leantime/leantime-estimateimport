@@ -4,8 +4,8 @@ use Leantime\Core\Events;
 
 /**
 * Adds a menu point for adding fixture data.
-* @param array $menuStructure The existing menu structure to which the new item will be added.
-* @return array The modified menu structure with the new item added.
+* @param array<string, array<int, array<string, mixed>>> $menuStructure The existing menu structure to which the new item will be added.
+* @return array<string, array<int, array<string, mixed>>> The modified menu structure with the new item added.
 */
 function addImportDataMenuPoint(array $menuStructure): array
 {

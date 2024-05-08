@@ -51,7 +51,7 @@ class ImportMapping extends Controller
   /**
    * post
    *
-   * @param array $params
+   * @param array<string, string|int> $params
    * @return void
    */
     public function post(array $params): void

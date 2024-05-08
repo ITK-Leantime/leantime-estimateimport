@@ -13,7 +13,11 @@ class ImportHelper
 {
     private TicketService $ticketService;
     private ProjectService $projectService;
-    private $projectMilestones;
+
+    /**
+     * @var array<string, array<string, mixed>> $projectMilestones
+     */
+    private array $projectMilestones;
 
     /**
      * constructor
@@ -31,7 +35,7 @@ class ImportHelper
     /**
      * Get milestone object internally
      *
-     * @return array
+     * @return array<string, array<string, mixed>>
      *
      */
     private function getProjectMilestones(bool $update = false): array
@@ -66,10 +70,10 @@ class ImportHelper
      /**
      * Check if a given milestone exists in the database for the current project
      *
-     * @return array
+     * @return bool|string
      *
      */
-    public function checkMilestoneExist($milestone, bool $update = false): bool|string
+    public function checkMilestoneExist(string $milestone, bool $update = false): bool|string
     {
         $milestones = $this->getProjectMilestones($update);
         return array_reduce($milestones, function ($carry, $item) use ($milestone) {
@@ -80,10 +84,10 @@ class ImportHelper
      /**
      * Adds a given milestone
      *
-     * @return array
+     * @return array<string, string>|bool|int
      *
      */
-    public function addMilestone($milestone): array|bool|int
+    public function addMilestone(string $milestone): array|bool|int
     {
         $params = array(
             'headline' => $milestone,
@@ -94,7 +98,7 @@ class ImportHelper
 /**
      * Gets all supported fields for mapping
      *
-     * @return array
+     * @return array<string, array<string, string>>
      *
      */
     public function getSupportedFields(): array
@@ -201,7 +205,7 @@ class ImportHelper
      * @return bool
      *
      */
-    private function validateDate($date, $format = 'Y-m-d'): bool
+    private function validateDate(string $date, string $format = 'Y-m-d'): bool
     {
         $d = DateTime::createFromFormat($format, $date);
     // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
@@ -211,8 +215,7 @@ class ImportHelper
       /**
    * getAllProjects from timesheet repository
    *
-   * @return array
-   * @throws BindingResolutionException
+   * @return array<int<0, max>, array<string, mixed>>
    */
     public function getAllProjectIds(): array
     {

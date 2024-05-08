@@ -75,7 +75,7 @@ class ImportValidation extends Controller
     /**
      * post
      *
-     * @param array $params
+     * @param array<string, array<int, int>|string> $params
      * @return void
      */
     public function post(array $params): void
@@ -112,7 +112,7 @@ class ImportValidation extends Controller
 
                         // Because of Leantimes internal "date database preparation", dates has to be formatted like datetimehelper expects
                         $leantimeUserDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__('language.dateformat');
-                        $values[$mappings[$key]] = $date->format($leantimeUserDateFormat) ?? '';
+                        $values[$mappings[$key]] = $date->format($leantimeUserDateFormat);
                         break;
                     default:
                         $values[$mappings[$key]] = $dat ?? '';
@@ -135,7 +135,7 @@ class ImportValidation extends Controller
      * @return void
      *
      */
-    public function fixErrors($subject)
+    public function fixErrors(string $subject): void
     {
         switch ($subject) {
             case 'Milestone':
@@ -149,10 +149,8 @@ class ImportValidation extends Controller
                     }
                 }
                 die(json_encode($result));
-            break;
             default:
                 die('not implemented');
-            break;
         }
     }
 }

@@ -7,7 +7,10 @@ namespace Leantime\Plugins\EstimateImport\Services;
  */
 class EstimateImport
 {
-    private static $assets = [
+    /**
+     * @var array<string, string> $assets
+     */
+    private static array $assets = [
         // source => target
         __DIR__ . '/../assets/EstimateImport.js' => APP_ROOT . '/public/dist/js/plugin-EstimateImport.js',
         __DIR__ . '/../assets/EstimateImport.css' => APP_ROOT . '/public/dist/css/plugin-EstimateImport.css',
@@ -20,7 +23,7 @@ class EstimateImport
      */
     public function install(): void
     {
-        foreach (static::$assets as $source => $target) {
+        foreach (self::getAssets() as $source => $target) {
             if (file_exists($target)) {
                 unlink($target);
             }
@@ -35,10 +38,20 @@ class EstimateImport
      */
     public function uninstall(): void
     {
-        foreach (static::$assets as $target) {
+        foreach (self::getAssets() as $target) {
             if (file_exists($target)) {
                 unlink($target);
             }
         }
+    }
+
+    /**
+     * Get assets
+     *
+     * @return array|string[]
+     */
+    private static function getAssets(): array
+    {
+        return self::$assets;
     }
 }

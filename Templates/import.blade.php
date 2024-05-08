@@ -5,11 +5,11 @@
 <x-global::pageheader :icon="'fa fa-table'">
     <h1>Import To-Dos</h1>
 </x-global::pageheader>
-<link rel="stylesheet"  href="<?php echo $tpl->get('importStyling') ?>" />
-<script type="module" src="<?php echo $tpl->get('importScript') ?>"></script>
+<link rel="stylesheet"  href="{{ $tpl->get('importStyling') }}" />
+<script type="module" src="{{ $tpl->get('importScript') }}"></script>
 
 <div class="estimateimport-content maincontent">
-<?php echo $tpl->displayNotification(); ?>
+    {{ $tpl->displayNotification() }}
     <div class="maincontentinner">
 
     <ol class="steps">
@@ -41,11 +41,11 @@
             <div class="form-group">
                 <label for="projectId">Project</label>
                 <select name="projectId">
-                    <?php
-                        foreach ($tpl->get('projectData') as $projectDatum) {
-                            echo "<option " . ($projectDatum['id'] === $tpl->get('currentProject') ? 'selected' : '') . "  value='" . $projectDatum['id'] . "'>" . $projectDatum['name'] . "</option>";
-                        }
-                    ?>
+                    @forelse(optional($tpl)->get('projectData') as $projectDatum)
+                        <option {{ $projectDatum['id'] === optional($tpl)->get('currentProject') ? 'selected' : '' }}  value="{{ $projectDatum['id'] }}">{{ $projectDatum['name'] }}</option>
+                    @empty
+                        <option>No projects</option>
+                    @endforelse
                 </select>
             </div>
 
