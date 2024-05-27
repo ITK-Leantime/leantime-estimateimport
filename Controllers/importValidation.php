@@ -152,12 +152,18 @@ class ImportValidation extends Controller
             $this->ticketService->addTicket($values);
         }
 
-        unset($_SESSION['csv_data']);
+        if ($csvDataFile) {
+            unlink($csvDataFile);
+        }
         header('Location: /projects/changeCurrentProject/' . $currentProject . '?estimateImportSuccess=1');
     }
 
     /**
      * Attempts to fix certain errors given in import validation
+     *
+     * @param string $subject
+     *
+     * @param array $csvData
      *
      * @return void
      *
