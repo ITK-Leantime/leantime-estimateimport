@@ -3,7 +3,7 @@
     "description": "Estimate import plugin",
     "license": "MIT",
     "type": "leantime-plugin",
-    "version": "1.0",
+    "version": "0.0.1",
     "authors": [
         {
             "name": "Jeppe Krogh",
