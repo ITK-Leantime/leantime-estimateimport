@@ -222,7 +222,7 @@ class ImportHelper
         $validationData['mapping_data'] = $mapping_data;
         $validationData['data'] = $data;
 
-        $savedSuccess = $this->saveDataToTempFile($validationData,$tempFilePath);
+        $savedSuccess = $this->saveDataToTempFile($validationData, $tempFilePath);
 
         if (!$savedSuccess) {
             error_log('Failed to save temp file.');
@@ -268,16 +268,16 @@ class ImportHelper
     /**
      * Saves the data to a tmp file, either given or creates a new one.
      *
-     * @param string $tempFilePath
-     *
      * @param array  $dataToSave
+     *
+     * @param string $tempFilePath
      *
      * @return string|bool
      */
-    public function saveDataToTempFile(array $dataToSave, string $tempFilePath = ""): string|bool
+    public function saveDataToTempFile(array $dataToSave, string $tempFilePath = ''): string|bool
     {
 
-        if ($tempFilePath === "") {
+        if ($tempFilePath === '') {
             // Create tmp file
             $csvDataFile = tempnam(sys_get_temp_dir(), 'csv_data_');
 
