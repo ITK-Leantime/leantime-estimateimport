@@ -2,6 +2,7 @@
 
 namespace Leantime\Plugins\EstimateImport\Controllers;
 
+use Exception;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
@@ -17,22 +18,29 @@ class ImportMapping extends Controller
    * constructor
    *
    * @param ImportHelper $importHelper
+   *
    * @return void
    */
-    public function init(ImportHelper $importHelper)
+    public function init(ImportHelper $importHelper): void
     {
         $this->importHelper = $importHelper;
     }
 
   /**
-   * get
+   * Gathers data and feeds it to the template.
    *
    * @return Response
    *
-   * @throws \Exception
+   * @throws Exception
    */
     public function get(): Response
     {
+        $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
+
+        $csvData = $this->importHelper->getDataFromTempFile($csvDataFile);
+
+        $estimateHeaders = $csvData['headers'] ?? [];
+        $estimateDataResult = $csvData['data'] ?? [];
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
@@ -41,23 +49,27 @@ class ImportMapping extends Controller
 
         $supportedFields = $this->importHelper->getSupportedFields();
         $this->tpl->assign('supportedFields', $supportedFields);
-        $this->tpl->assign('estimateFileHeaders', $_SESSION['csv_data']['headers']);
-        $this->tpl->assign('estimateFileData', $_SESSION['csv_data']['data']);
+        $this->tpl->assign('estimateFileHeaders', $estimateHeaders);
+        $this->tpl->assign('estimateFileData', $estimateDataResult);
 
 
         return $this->tpl->display('EstimateImport.importMapping');
     }
 
   /**
-   * post
+   * Handles submitted mapping and stores it in the tmp file.
    *
    * @param array<string, string|int> $params
    * @return void
    */
     public function post(array $params): void
     {
-        // Save mapping data to session
-        $_SESSION['csv_data']['mapping_data'] = $params;
+        $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
+
+        // @TODO validate mapping
+        $csvData['mapping_data'] = $params;
+
+        $this->importHelper->saveDataToTempFile($csvDataFile, $csvData);
 
         // Redirect to next step
         header('Location: /EstimateImport/importValidation');

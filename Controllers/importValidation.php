@@ -3,6 +3,7 @@
 namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Leantime\Core\Controller;
+use Leantime\Core\Support\DateTimeHelper;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -15,20 +16,25 @@ class ImportValidation extends Controller
     private TicketService $ticketService;
     private ImportHelper $importHelper;
 
+    private DateTimeHelper $dateTimeHelper;
+
     /**
      * constructor
      *
      * @param TicketService $ticketService
+     *
      * @param ImportHelper  $importHelper
+     *
      * @return void
      */
-    public function init(TicketService $ticketService, ImportHelper $importHelper)
+    public function init(TicketService $ticketService, ImportHelper $importHelper, DateTimeHelper $dateTimeHelper): void
     {
         $this->ticketService = $ticketService;
         $this->importHelper = $importHelper;
+        $this->dateTimeHelper = $dateTimeHelper;
     }
     /**
-     * get
+     * Gathers data and feeds it to the template.
      *
      * @return Response
      *
@@ -36,13 +42,22 @@ class ImportValidation extends Controller
      */
     public function get(): Response
     {
+        $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
+
+        $csvData = $this->importHelper->getDataFromTempFile($csvDataFile);
+
         // Javascript fixErrors hook
         if ($_GET['fixErrors']) {
-            $this->fixErrors($_GET['fixErrors']);
+            $this->fixErrors($_GET['fixErrors'], $csvData);
         }
 
-        // Check data validitity
-        $this->importHelper->dataValidationCheck();
+        // Check data validity
+        $validatedData = $this->importHelper->dataValidationCheck($csvDataFile, $csvData);
+
+        if (!$validatedData) {
+            error_log('Validation failed');
+            throw new \Exception('Validation failed');
+        }
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
@@ -54,37 +69,53 @@ class ImportValidation extends Controller
         $this->tpl->assign('supportedFields', $supportedFields);
 
         // Data to display
-        $dataToValidate = $_SESSION['csv_data']['result'];
+        $dataToValidate = $validatedData['data'] ?? [];
         $this->tpl->assign('dataToValidate', $dataToValidate);
 
         // Previously mapped fields
-        $mappings = $_SESSION['csv_data']['mappings'];
+        $mappings = $validatedData['mapping_data'] ?? [];
         $this->tpl->assign('mappings', $mappings);
 
         // Warnings gathered in dataValidationCheck
-        $validationWarnings = $_SESSION['csv_data']['warnings'];
+        $validationWarnings = $validatedData['warnings'] ?? [];
         $this->tpl->assign('validationWarnings', $validationWarnings);
 
         // Errors gathered in dataValidationCheck
-        $validationErrors = $_SESSION['csv_data']['errors'];
+        $validationErrors = $validatedData['errors'] ?? [];
         $this->tpl->assign('validationErrors', $validationErrors);
 
         return $this->tpl->display('EstimateImport.importValidation');
     }
 
     /**
-     * post
+     * Gathers the validated data, and imports it into Leantime.
      *
      * @param array<string, array<int, int>|string> $params
+     *
      * @return void
+     *
+     * @throws \Exception
      */
     public function post(array $params): void
     {
-        $mappings = $_SESSION['csv_data']['mappings'];
-        $dataToImport = $_SESSION['csv_data']['result'];
-        $currentProject = $_SESSION['currentProject'];
+        $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
+        $csvData = $this->importHelper->getDataFromTempFile($csvDataFile);
+
+        if (!$csvData) {
+            error_log('Could not find data from csv file');
+            throw new \Exception('Could not find data from csv file');
+        }
+
+        $mappings = $csvData['mapping_data'] ?? [];
+        $dataToImport = $csvData['data'] ?? [];
+        $currentProject = $_SESSION['currentProject'] ?? $csvData['projectId'];
+        $dateFormat = $csvData['dateFormat'] ?? 'Y-m-d';
         $dataImportConfirmation = $params['dataImportConfirmation'];
 
+        if (!$currentProject) {
+            error_log('Could not find current project');
+            throw new \Exception('Could not find current project');
+        }
         foreach ($dataToImport as $count => $datumToImport) {
             if (!in_array($count, $dataImportConfirmation)) {
                 continue;
@@ -96,7 +127,7 @@ class ImportValidation extends Controller
                 switch ($mappings[$key]) {
                     // If milestone is mapped, get and set id if exists. Else do not set.
                     case 'milestoneid':
-                        $milestoneId = $this->importHelper->checkMilestoneExist($dat, true);
+                        $milestoneId = $this->importHelper->checkMilestoneExist($dat, $currentProject);
                         if ($milestoneId) {
                             $values['milestoneid'] = $milestoneId;
                         }
@@ -107,7 +138,6 @@ class ImportValidation extends Controller
                         break;
                     // If dateToFinish is mapped, convert date from known format to db format.
                     case 'dateToFinish':
-                        $dateFormat = $_SESSION['csv_data']['date_format'];
                         $date = \DateTime::createFromFormat($dateFormat, $dat);
 
                         // Because of Leantimes internal "date database preparation", dates has to be formatted like datetimehelper expects
@@ -118,8 +148,8 @@ class ImportValidation extends Controller
                         $values[$mappings[$key]] = $dat ?? '';
                         break;
                 }
-
-                $values['status'] = '3'; // Status "3" is "New"
+                // Status "3" is "New"
+                $values['status'] = '3';
                 $values['currentProject'] = $currentProject; // Current project id gathered from entry point (project dashboard).
             }
             $this->ticketService->addTicket($values);
@@ -129,20 +159,32 @@ class ImportValidation extends Controller
         header('Location: /projects/changeCurrentProject/' . $currentProject . '?estimateImportSuccess=1');
     }
 
-     /**
+    /**
      * Attempts to fix certain errors given in import validation
      *
      * @return void
      *
+     * @throws \Exception
      */
-    public function fixErrors(string $subject): void
+    public function fixErrors(string $subject, array $csvData): void
     {
+
+        if (!$csvData) {
+            error_log('Trying to fix errors without providing tmp file data containing subjects');
+            throw new \Exception('Trying to fix errors without providing tmp file data containing subjects');
+        }
+
+        $projectId = $csvData['projectId'];
+        if (!$projectId) {
+            error_log('Trying to fix errors without providing projectId');
+            throw new \Exception('Trying to fix errors without providing projectId');
+        }
         switch ($subject) {
             case 'Milestone':
-                $milestonesToCreate = $_SESSION['csv_data']['errors'][$subject];
+                $milestonesToCreate = $csvData['errors'][$subject];
                 $result = array();
                 foreach ($milestonesToCreate as $milestone => $errorMessage) {
-                    $milestoneExists = $this->importHelper->checkMilestoneExist($milestone, true);
+                    $milestoneExists = $this->importHelper->checkMilestoneExist($milestone, $projectId, false);
                     if (!$milestoneExists) {
                         $milestoneAdded = $this->importHelper->addMilestone($milestone);
                         $result[$milestone] = $milestoneAdded;
