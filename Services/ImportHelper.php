@@ -12,7 +12,6 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
  */
 class ImportHelper
 {
-
     /**
      * @var array<string, array<string, mixed>> $projectMilestones
      */
@@ -21,16 +20,14 @@ class ImportHelper
     /**
      * constructor
      *
-     * @param TicketService $ticketService
+     * @param TicketService  $ticketService
      * @param ProjectService $projectService
      * @return void
      */
     public function __construct(
-        private readonly TicketService  $ticketService,
+        private readonly TicketService $ticketService,
         private readonly ProjectService $projectService,
-    )
-    {
-
+    ) {
     }
 
     /**
@@ -83,7 +80,7 @@ class ImportHelper
      *
      * @param string $projectId
      *
-     * @param bool $useCache
+     * @param bool   $useCache
      *
      * @return bool|string
      *
@@ -152,7 +149,7 @@ class ImportHelper
      *
      * @param string $tempFilePath
      *
-     * @param array $dataToValidate
+     * @param array  $dataToValidate
      *
      * @return array|bool
      *
@@ -200,7 +197,6 @@ class ImportHelper
                     }
                 }
                 if ($mapping_datum === 'milestoneid') {
-
                     if (empty($datum[$key])) {
                         continue;
                     }
@@ -211,7 +207,6 @@ class ImportHelper
                     }
                 }
                 if ($mapping_datum === 'dateToFinish') {
-
                     if (empty($datum[$key])) {
                         continue;
                     }
@@ -227,14 +222,13 @@ class ImportHelper
         $validationData['mapping_data'] = $mapping_data;
         $validationData['data'] = $data;
 
-        $savedSuccess = $this->saveDataToTempFile($tempFilePath, $validationData);
+        $savedSuccess = $this->saveDataToTempFile($validationData,$tempFilePath);
 
         if (!$savedSuccess) {
             error_log('Failed to save temp file.');
             throw new \Exception('Failed to save temp file.');
         }
         return $this->getDataFromTempFile($tempFilePath);
-
     }
 
     /**
@@ -271,10 +265,19 @@ class ImportHelper
         return $reducedData;
     }
 
-    public function saveDataToTempFile(string $tempFilePath, array $dataToSave): string|bool
+    /**
+     * Saves the data to a tmp file, either given or creates a new one.
+     *
+     * @param string $tempFilePath
+     *
+     * @param array  $dataToSave
+     *
+     * @return string|bool
+     */
+    public function saveDataToTempFile(array $dataToSave, string $tempFilePath = ""): string|bool
     {
 
-        if (!$tempFilePath) {
+        if ($tempFilePath === "") {
             // Create tmp file
             $csvDataFile = tempnam(sys_get_temp_dir(), 'csv_data_');
 
@@ -287,7 +290,6 @@ class ImportHelper
             if ($savedSuccess) {
                 return $csvDataFile;
             }
-
         } else {
             // Get data from existing tmp file
             $csvDataEncoded = file_get_contents($tempFilePath);
@@ -311,6 +313,15 @@ class ImportHelper
         return false;
     }
 
+    /**
+     * Gets the data from a given temp file.
+     *
+     * @param string $tempFilePath
+     *
+     * @return array|bool
+     *
+     * @throws Exception
+     */
     public function getDataFromTempFile(string $tempFilePath): array|bool
     {
         // Get data from existing tmp file
@@ -322,9 +333,8 @@ class ImportHelper
 
             return $csvData ?? false;
         } else {
-            error_log("Cannot read data from tmp file");
-            throw new Exception("Cannot read data from tmp file");
+            error_log('Cannot read data from tmp file');
+            throw new Exception('Cannot read data from tmp file');
         }
-
     }
 }
