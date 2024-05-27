@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Added EstimateImport plugin.
+* [PR-1](https://github.com/ITK-Leantime/leantime-estimateimport/pull/1)
+  Added EstimateImport plugin.
 
 [Unreleased]: https://github.com/ITK-Leantime/leantime-estimateimport
