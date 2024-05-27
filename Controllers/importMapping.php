@@ -69,7 +69,7 @@ class ImportMapping extends Controller
         // @TODO validate mapping
         $csvData['mapping_data'] = $params;
 
-        $this->importHelper->saveDataToTempFile($csvDataFile, $csvData);
+        $this->importHelper->saveDataToTempFile($csvData, $csvDataFile);
 
         // Redirect to next step
         header('Location: /EstimateImport/importValidation');

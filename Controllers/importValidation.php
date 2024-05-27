@@ -16,8 +16,6 @@ class ImportValidation extends Controller
     private TicketService $ticketService;
     private ImportHelper $importHelper;
 
-    private DateTimeHelper $dateTimeHelper;
-
     /**
      * constructor
      *
@@ -27,11 +25,10 @@ class ImportValidation extends Controller
      *
      * @return void
      */
-    public function init(TicketService $ticketService, ImportHelper $importHelper, DateTimeHelper $dateTimeHelper): void
+    public function init(TicketService $ticketService, ImportHelper $importHelper): void
     {
         $this->ticketService = $ticketService;
         $this->importHelper = $importHelper;
-        $this->dateTimeHelper = $dateTimeHelper;
     }
     /**
      * Gathers data and feeds it to the template.

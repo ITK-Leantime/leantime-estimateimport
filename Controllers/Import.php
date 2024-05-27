@@ -72,13 +72,13 @@ class Import extends Controller
         $estimateFile = $_FILES['estimateFile']['tmp_name'];
 
         if ($estimateFileType !== 'csv' || !$estimateFile) {
-            error_log("No file or wrong extension");
+            error_log('No file or wrong extension');
             throw new Exception('No file or wrong extension');
         }
         $estimateFileReader = fopen($estimateFile, 'r');
 
         if (!$estimateFileReader) {
-            error_log("Cannot open file");
+            error_log('Cannot open file');
             throw new Exception('Cannot open file');
         }
 
@@ -92,7 +92,7 @@ class Import extends Controller
         fclose($estimateFileReader);
 
         if (empty($estimateData)) {
-            error_log("Cannot open file");
+            error_log('Cannot open file');
             throw new Exception('Cannot open file');
         }
         $estimateHeaders = array_shift($estimateData);
@@ -110,10 +110,10 @@ class Import extends Controller
             'data' => $estimateDataResult,
             'headers' => $estimateHeaders,
             'projectId' => $params['projectId'],
-            'dateFormat' => $params['dateFormat']
+            'dateFormat' => $params['dateFormat'],
         ];
 
-        $tmpFile = $this->importHelper->saveDataToTempFile(false, $dataToStore);
+        $tmpFile = $this->importHelper->saveDataToTempFile($dataToStore);
 
         // Save tmp file location to session
         $_SESSION['csv_data']['temp_fileName'] = $tmpFile;
