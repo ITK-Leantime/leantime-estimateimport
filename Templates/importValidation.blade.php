@@ -72,8 +72,8 @@
                         ?>
 
                     <div class="form-group">
-                        <label for="dataValidated"><input id="dataValidated" type="checkbox" name="dataValidated"/>
-                            <span>Jeg er sikker på at data er korrekt mappet, og vil gerne importere det i Leantime.</span></label>
+                        <label for="dataValidated"><input id="dataValidated" type="checkbox" name="dataValidated"/> {{--TODO: Implement proper translations--}}
+                            <span>I am sure that the data is mapped correcly and i want to import it into Leantime.</span></label>
                     </div>
                     <br/>
 
