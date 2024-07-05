@@ -141,6 +141,10 @@ class ImportHelper
                 'name' => 'Due Date',
                 'help' => '',
             ),
+            'editorId' => array(
+                'name' => 'Assignee',
+                'help' => '',
+            ),
         );
     }
 
@@ -214,6 +218,15 @@ class ImportHelper
                     $dateValid = $this->validateDate($datum[$key], $dateFormat);
                     if (!$dateValid) {
                         $validationData['errors']['DueDate'][$datum[$key]] = 'The following DueDate is not in the format ' . $dateFormat . ': ';
+                    }
+                }
+                if ($mapping_datum === 'editorId') {
+                    if (empty($datum[$key])) {
+                        continue;
+                    }
+                    $assigneeEmailValid = $this->validateAssigneeEmail($datum[$key]);
+                    if (!$assigneeEmailValid) {
+                        $validationData['errors']['Assignee'][$datum[$key]] = 'The following Assignee email is not a valid email format: ';
                     }
                 }
             }
@@ -336,5 +349,10 @@ class ImportHelper
             error_log('Cannot read data from tmp file');
             throw new Exception('Cannot read data from tmp file');
         }
+    }
+
+    private function validateAssigneeEmail(string $assigneeEmail): bool
+    {
+        return $assigneeEmail === filter_var($assigneeEmail, FILTER_VALIDATE_EMAIL);
     }
 }

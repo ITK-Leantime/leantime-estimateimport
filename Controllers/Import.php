@@ -3,6 +3,7 @@
 namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
@@ -62,11 +63,11 @@ class Import extends Controller
      *
      * @param array<string, string|int> $params
      *
-     * @return void
+     * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function post(array $params): void
+    public function post(array $params): RedirectResponse
     {
         $estimateFileType = pathinfo($_FILES['estimateFile']['name'], PATHINFO_EXTENSION);
         $estimateFile = $_FILES['estimateFile']['tmp_name'];
@@ -119,6 +120,6 @@ class Import extends Controller
         $_SESSION['csv_data']['temp_fileName'] = $tmpFile;
 
         // Redirect to next step
-        header('Location: /EstimateImport/importMapping');
+        return new RedirectResponse('/EstimateImport/importMapping');
     }
 }
