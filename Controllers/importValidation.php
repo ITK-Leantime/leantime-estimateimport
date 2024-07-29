@@ -147,11 +147,10 @@ class ImportValidation extends Controller
                         break;
                     case 'editorId':
                         $user = $this->userService->getUserByEmail($dat);
-                        if ($user)
-                        {
+                        if ($user) {
                             $values[$mappings[$key]] = $user['id'];
                         }
-                    break;
+                        break;
                     default:
                         $values[$mappings[$key]] = $dat ?? '';
                         break;

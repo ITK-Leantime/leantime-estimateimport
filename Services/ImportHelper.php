@@ -104,7 +104,7 @@ class ImportHelper
     {
         $params = array(
             'headline' => $milestone,
-            'tags' => "",
+            'tags' => '',
         );
         return $this->ticketService->quickAddMilestone($params);
     }
@@ -352,6 +352,13 @@ class ImportHelper
         }
     }
 
+    /**
+     * Validates the assignee email address.
+     *
+     * @param string $assigneeEmail The email address to validate.
+     *
+     * @return bool True if the email address is valid, false otherwise.
+     */
     private function validateAssigneeEmail(string $assigneeEmail): bool
     {
         return $assigneeEmail === filter_var($assigneeEmail, FILTER_VALIDATE_EMAIL);
