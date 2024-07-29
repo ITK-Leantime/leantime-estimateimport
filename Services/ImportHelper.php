@@ -104,6 +104,7 @@ class ImportHelper
     {
         $params = array(
             'headline' => $milestone,
+            'tags' => "",
         );
         return $this->ticketService->quickAddMilestone($params);
     }
