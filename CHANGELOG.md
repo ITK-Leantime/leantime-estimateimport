@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 * Added assignee as possible import value
+* Added priority as possible import value
 
 ## [0.0.1] - 2024-05-31
 
