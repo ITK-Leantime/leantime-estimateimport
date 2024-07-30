@@ -44,6 +44,9 @@
                                         case "Milestone":
                                             echo "<div class='validation-error-headline'><h3>" . $errorGroupName . " (" . count($errorGroup) . " errors)</h3><span data-subject='" . $errorGroupName . "' class='btn btn-primary validation-fix-button'>Add milestones</span></div>";
                                             break;
+                                        case "Assignee":
+                                            echo "<div class='validation-error-headline'><h3>" . $errorGroupName . " (" . count($errorGroup) . " errors)</h3><span data-subject='" . $errorGroupName . "' class='btn btn-primary validation-fix-button'>Add users to project</span></div>";
+                                            break;
                                         default:
                                             echo "<div class='validation-error-headline'><h3>" . $errorGroupName . " (" . count($errorGroup) . " errors)</h3></div>";
                                             break;

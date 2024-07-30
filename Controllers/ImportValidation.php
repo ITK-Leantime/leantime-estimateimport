@@ -5,6 +5,7 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller;
 use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Users\Services\Users;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
@@ -18,6 +19,7 @@ class ImportValidation extends Controller
     private TicketService $ticketService;
     private ImportHelper $importHelper;
     private Users $userService;
+    private Projects $projectService;
 
     /**
      * constructor
@@ -26,13 +28,18 @@ class ImportValidation extends Controller
      *
      * @param ImportHelper  $importHelper
      *
+     * @param Users         $userService
+     *
+     * @param Projects      $projectService
+     *
      * @return void
      */
-    public function init(TicketService $ticketService, ImportHelper $importHelper, Users $userService): void
+    public function init(TicketService $ticketService, ImportHelper $importHelper, Users $userService, Projects $projectService): void
     {
         $this->ticketService = $ticketService;
         $this->importHelper = $importHelper;
         $this->userService = $userService;
+        $this->projectService = $projectService;
     }
     /**
      * Gathers data and feeds it to the template.
@@ -210,6 +217,18 @@ class ImportValidation extends Controller
                         $result[$milestone] = $milestoneAdded;
                     }
                 }
+                die(json_encode($result));
+            case 'Assignee':
+                $usersToAddToProject = $csvData['errors'][$subject];
+                $result = array();
+                foreach ($usersToAddToProject as $userEmail => $errorMessage) {
+                    $user = $this->userService->getUserByEmail($userEmail);
+                    if (!$user) {
+                        continue;
+                    }
+                    $this->projectService->editUserProjectRelations($user['id'], [$projectId]);
+                }
+
                 die(json_encode($result));
             default:
                 die('not implemented');
