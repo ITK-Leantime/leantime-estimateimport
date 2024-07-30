@@ -2,8 +2,10 @@
 
 namespace Leantime\Plugins\EstimateImport\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller;
 use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Domain\Users\Services\Users;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -15,6 +17,7 @@ class ImportValidation extends Controller
 {
     private TicketService $ticketService;
     private ImportHelper $importHelper;
+    private Users $userService;
 
     /**
      * constructor
@@ -25,10 +28,11 @@ class ImportValidation extends Controller
      *
      * @return void
      */
-    public function init(TicketService $ticketService, ImportHelper $importHelper): void
+    public function init(TicketService $ticketService, ImportHelper $importHelper, Users $userService): void
     {
         $this->ticketService = $ticketService;
         $this->importHelper = $importHelper;
+        $this->userService = $userService;
     }
     /**
      * Gathers data and feeds it to the template.
@@ -44,7 +48,7 @@ class ImportValidation extends Controller
         $csvData = $this->importHelper->getDataFromTempFile($csvDataFile);
 
         // Javascript fixErrors hook
-        if ($_GET['fixErrors']) {
+        if (isset($_GET['fixErrors'])) {
             $this->fixErrors($_GET['fixErrors'], $csvData);
         }
 
@@ -89,11 +93,11 @@ class ImportValidation extends Controller
      *
      * @param array<string, array<int, int>|string> $params
      *
-     * @return void
+     * @return RedirectResponse
      *
      * @throws \Exception
      */
-    public function post(array $params): void
+    public function post(array $params): RedirectResponse
     {
         $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
         $csvData = $this->importHelper->getDataFromTempFile($csvDataFile);
@@ -131,7 +135,7 @@ class ImportValidation extends Controller
                         break;
                     case 'planHours':
                         $values[$mappings[$key]] = str_replace(',', '.', $dat); // Convert comma to punctuation
-                        $values[$mappings[$key]] = str_replace(',', '.', $dat); // Set hourRemaining aswell as it is not set automatically.
+                        $values['hourRemaining'] = str_replace(',', '.', $dat); // Set hourRemaining aswell as it is not set automatically.
                         break;
                     // If dateToFinish is mapped, convert date from known format to db format.
                     case 'dateToFinish':
@@ -140,6 +144,19 @@ class ImportValidation extends Controller
                         // Because of Leantimes internal "date database preparation", dates has to be formatted like datetimehelper expects
                         $leantimeUserDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__('language.dateformat');
                         $values[$mappings[$key]] = $date->format($leantimeUserDateFormat);
+                        break;
+                    case 'editorId':
+                        $user = $this->userService->getUserByEmail($dat);
+                        if ($user) {
+                            $values[$mappings[$key]] = $user['id'];
+                        }
+                        break;
+                    case 'priority':
+                        $validPriority = $this->importHelper->validatePriority($dat);
+
+                        if ($validPriority) {
+                            $values[$mappings[$key]] = $dat;
+                        }
                         break;
                     default:
                         $values[$mappings[$key]] = $dat ?? '';
@@ -155,7 +172,7 @@ class ImportValidation extends Controller
         if ($csvDataFile) {
             unlink($csvDataFile);
         }
-        header('Location: /projects/changeCurrentProject/' . $currentProject . '?estimateImportSuccess=1');
+        return new RedirectResponse('/projects/changeCurrentProject/' . $currentProject . '?estimateImportSuccess=1');
     }
 
     /**

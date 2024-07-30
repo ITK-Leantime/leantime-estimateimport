@@ -104,6 +104,7 @@ class ImportHelper
     {
         $params = array(
             'headline' => $milestone,
+            'tags' => '',
         );
         return $this->ticketService->quickAddMilestone($params);
     }
@@ -139,6 +140,14 @@ class ImportHelper
             ),
             'dateToFinish' => array(
                 'name' => 'Due Date',
+                'help' => '',
+            ),
+            'editorId' => array(
+                'name' => 'Assignee',
+                'help' => '',
+            ),
+            'priority' => array(
+                'name' => 'Priority',
                 'help' => '',
             ),
         );
@@ -214,6 +223,24 @@ class ImportHelper
                     $dateValid = $this->validateDate($datum[$key], $dateFormat);
                     if (!$dateValid) {
                         $validationData['errors']['DueDate'][$datum[$key]] = 'The following DueDate is not in the format ' . $dateFormat . ': ';
+                    }
+                }
+                if ($mapping_datum === 'editorId') {
+                    if (empty($datum[$key])) {
+                        continue;
+                    }
+                    $assigneeEmailValid = $this->validateAssigneeEmail($datum[$key]);
+                    if (!$assigneeEmailValid) {
+                        $validationData['errors']['Assignee'][$datum[$key]] = 'The following Assignee email is not a valid email format: ';
+                    }
+                }
+                if ($mapping_datum === 'priority') {
+                    if (empty($datum[$key])) {
+                        continue;
+                    }
+                    $priorityValid = $this->validatePriority($datum[$key]);
+                    if (!$priorityValid) {
+                        $validationData['errors']['Priority'][$datum[$key]] = 'The following priority is not valid: ';
                     }
                 }
             }
@@ -336,5 +363,31 @@ class ImportHelper
             error_log('Cannot read data from tmp file');
             throw new Exception('Cannot read data from tmp file');
         }
+    }
+
+    /**
+     * Validates the assignee email address.
+     *
+     * @param string $assigneeEmail The email address to validate.
+     *
+     * @return bool True if the email address is valid, false otherwise.
+     */
+    private function validateAssigneeEmail(string $assigneeEmail): bool
+    {
+        return $assigneeEmail === filter_var($assigneeEmail, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * Validates the priority value against predefined priorities.
+     *
+     * @param string $priority The priority value to validate.
+     * @return bool Returns true if the priority value is valid, false otherwise.
+     */
+    public function validatePriority(string $priority): bool
+    {
+        // Valid priorities are defined in app/Domain/Tickets/Repositories/Tickets.php:97
+        $validPriorities = array('1', '2', '3', '4', '5');
+
+        return in_array($priority, $validPriorities);
     }
 }
