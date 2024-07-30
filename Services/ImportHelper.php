@@ -378,13 +378,14 @@ class ImportHelper
     }
 
     /**
-     * Validates the priority value against priorities defined in app/Domain/Tickets/Repositories/Tickets.php:97
+     * Validates the priority value against predefined priorities.
      *
      * @param string $priority The priority value to validate.
      * @return bool Returns true if the priority value is valid, false otherwise.
      */
     public function validatePriority(string $priority): bool
     {
+        // Valid priorities are defined in app/Domain/Tickets/Repositories/Tickets.php:97
         $validPriorities = array('1', '2', '3', '4', '5');
 
         return in_array($priority, $validPriorities);
