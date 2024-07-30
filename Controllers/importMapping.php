@@ -3,6 +3,7 @@
 namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
@@ -60,9 +61,9 @@ class ImportMapping extends Controller
    * Handles submitted mapping and stores it in the tmp file.
    *
    * @param array<string, string|int> $params
-   * @return void
+   * @return RedirectResponse
    */
-    public function post(array $params): void
+    public function post(array $params): RedirectResponse
     {
         $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
 
@@ -72,6 +73,6 @@ class ImportMapping extends Controller
         $this->importHelper->saveDataToTempFile($csvData, $csvDataFile);
 
         // Redirect to next step
-        header('Location: /EstimateImport/importValidation');
+        return new RedirectResponse('/EstimateImport/importValidation');
     }
 }
