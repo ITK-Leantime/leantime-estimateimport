@@ -151,6 +151,13 @@ class ImportValidation extends Controller
                             $values[$mappings[$key]] = $user['id'];
                         }
                         break;
+                    case 'priority':
+                        $validPriority = $this->importHelper->validatePriority($dat);
+
+                        if ($validPriority) {
+                            $values[$mappings[$key]] = $dat;
+                        }
+                        break;
                     default:
                         $values[$mappings[$key]] = $dat ?? '';
                         break;
