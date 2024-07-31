@@ -31,15 +31,19 @@
                             $mappings = $tpl->get('mappings') ?? [];
                             $supportedFields = $tpl->get('supportedFields') ?? [];
                             if (!empty($validationWarnings)) {
-                                echo "<h2>Warnings:</h2>";
+                                echo "<h2 class='warning-headline collapsed' data-toggle='collapse' data-target='#warningCollapse'>Warnings</h2>";
+                                echo "<div id='warningCollapse' class='collapse'>";
                                 foreach ($validationWarnings as $validationWarning) {
                                     echo "<p>" . $validationWarning . "</p>";
                                 }
+                                echo "</div>";
                             }
                             if (!empty($validationErrors)) {
                                 echo "</br></br>";
-                                echo "<h2>Errors:</h2>";
+                                echo "<h2 class='error-headline' data-toggle='collapse' data-target='#errorCollapse'>Errors:</h2>";
+                                echo "<div id='errorCollapse' class='in collapse'>";
                                 foreach ($validationErrors as $errorGroupName => $errorGroup) {
+                                    echo "<div>";
                                     switch ($errorGroupName) {
                                         case "Milestone":
                                             echo "<div class='validation-error-headline'><h3>" . $errorGroupName . " (" . count($errorGroup) . " errors)</h3><span data-subject='" . $errorGroupName . "' class='btn btn-primary validation-fix-button'>Add milestones</span></div>";
@@ -56,7 +60,9 @@
                                         echo "<p>" . $errorSpec . " <b>" . $errorSubject . "</b></p>";
 
                                     }
+                                    echo "</div>";
                                 }
+                                echo "</div>";
                             }
 
                             echo "</br></br>";
