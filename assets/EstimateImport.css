@@ -171,20 +171,20 @@ label[for="dataValidated"] > span {
 }
 .warning-headline,
 .error-headline {
-    cursor: pointer;
+  cursor: pointer;
 }
 .warning-headline:after,
 .error-headline:after {
-    content: '▼';
-    font-size: 12px;
-    margin-left: 5px;
+  content: "▼";
+  font-size: 12px;
+  margin-left: 5px;
 }
 .warning-headline.collapsed:after,
 .error-headline.collapsed:after {
-    content: '▲';
+  content: "▲";
 }
 
 #warningCollapse > div,
 #errorCollapse > div {
-    margin: 15px 0;
+  margin: 15px 0;
 }
