@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Added assignee-project connection button
+
 ## [0.1.1] - 2024-07-30
 
 * Added assignee as possible import value

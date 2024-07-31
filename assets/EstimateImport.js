@@ -18,8 +18,11 @@ window.addEventListener("load", (event) => {
 
       switch (subject) {
         case "Milestone":
+        case "Assignee":
           e.target.innerHTML =
-            "Adding milestones <i class='fa fa-fw fa-spinner fa-spin'></i>";
+            "Adding " +
+            subject +
+            "s <i class='fa fa-fw fa-spinner fa-spin'></i>";
           async function fetchData() {
             let response = await fetch(
               "/EstimateImport/importValidation?fixErrors=" + subject,
@@ -31,6 +34,7 @@ window.addEventListener("load", (event) => {
           }
           fetchData();
           break;
+
         default:
           console.log("not yet implemented");
           break;

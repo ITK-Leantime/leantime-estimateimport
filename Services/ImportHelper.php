@@ -4,8 +4,10 @@ namespace Leantime\Plugins\EstimateImport\Services;
 
 use DateTime;
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Users\Services\Users;
 
 /**
  * ImportHelper class
@@ -22,11 +24,13 @@ class ImportHelper
      *
      * @param TicketService  $ticketService
      * @param ProjectService $projectService
+     * @param Users          $userService
      * @return void
      */
     public function __construct(
         private readonly TicketService $ticketService,
         private readonly ProjectService $projectService,
+        private readonly Users $userService,
     ) {
     }
 
@@ -229,9 +233,21 @@ class ImportHelper
                     if (empty($datum[$key])) {
                         continue;
                     }
+                    $assigneeExistsInSystem = $this->userService->getUserByEmail($datum[$key]);
+                    if (!$assigneeExistsInSystem) {
+                        $validationData['errors']['Assignee Invalid'][$datum[$key]] = 'The following Assignee email does not exist in the system: ';
+                        continue;
+                    }
+
                     $assigneeEmailValid = $this->validateAssigneeEmail($datum[$key]);
                     if (!$assigneeEmailValid) {
-                        $validationData['errors']['Assignee'][$datum[$key]] = 'The following Assignee email is not a valid email format: ';
+                        $validationData['errors']['Assignee Format'][$datum[$key]] = 'The following Assignee email is not a valid email format: ';
+                        continue;
+                    }
+
+                    $assigneeEmailConnectedToProject = $this->validateAssigneeEmailConnectedToProject($datum[$key], $projectId);
+                    if (!$assigneeEmailConnectedToProject) {
+                        $validationData['errors']['Assignee'][$datum[$key]] = 'The following Assignee email is not connected to the given project(' . $projectId . '): ';
                     }
                 }
                 if ($mapping_datum === 'priority') {
@@ -377,6 +393,22 @@ class ImportHelper
         return $assigneeEmail === filter_var($assigneeEmail, FILTER_VALIDATE_EMAIL);
     }
 
+    /**
+     * Validate if assignee email is connected to a project
+     *
+     * @param string $assigneeEmail
+     * @param int    $projectId
+     * @return bool
+     * @throws BindingResolutionException
+     */
+    public function validateAssigneeEmailConnectedToProject(string $assigneeEmail, int $projectId): bool
+    {
+        $user = $this->userService->getUserByEmail($assigneeEmail);
+        if (!$user) {
+            return false;
+        }
+        return $this->projectService->isUserAssignedToProject($user['id'], $projectId);
+    }
     /**
      * Validates the priority value against predefined priorities.
      *

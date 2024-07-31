@@ -169,3 +169,22 @@ label[for="dataValidated"] > input {
 label[for="dataValidated"] > span {
   color: #000;
 }
+.warning-headline,
+.error-headline {
+  cursor: pointer;
+}
+.warning-headline:after,
+.error-headline:after {
+  content: "▼";
+  font-size: 12px;
+  margin-left: 5px;
+}
+.warning-headline.collapsed:after,
+.error-headline.collapsed:after {
+  content: "▲";
+}
+
+#warningCollapse > div,
+#errorCollapse > div {
+  margin: 15px 0;
+}
