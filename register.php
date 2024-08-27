@@ -22,4 +22,6 @@ function addImportDataMenuPoint(array $menuStructure): array
     return $menuStructure;
 }
 
-EventDispatcher::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures', 'addImportDataMenuPoint');
+if (class_exists(EventDispatcher::class)) {
+    EventDispatcher::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures', 'addImportDataMenuPoint');
+}

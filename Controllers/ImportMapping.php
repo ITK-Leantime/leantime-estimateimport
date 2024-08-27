@@ -4,7 +4,8 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller;
+use Leantime\Core\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 
@@ -14,6 +15,7 @@ use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 class ImportMapping extends Controller
 {
     private ImportHelper $importHelper;
+    protected Template $template;
 
   /**
    * constructor
@@ -22,9 +24,10 @@ class ImportMapping extends Controller
    *
    * @return void
    */
-    public function init(ImportHelper $importHelper): void
+    public function init(ImportHelper $importHelper, Template $template): void
     {
         $this->importHelper = $importHelper;
+        $this->template = $template;
     }
 
   /**
@@ -45,16 +48,16 @@ class ImportMapping extends Controller
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
-        $this->tpl->assign('importStyling', $importStyling);
-        $this->tpl->assign('importScript', $importScript);
+        $this->template->assign('importStyling', $importStyling);
+        $this->template->assign('importScript', $importScript);
 
         $supportedFields = $this->importHelper->getSupportedFields();
-        $this->tpl->assign('supportedFields', $supportedFields);
-        $this->tpl->assign('estimateFileHeaders', $estimateHeaders);
-        $this->tpl->assign('estimateFileData', $estimateDataResult);
+        $this->template->assign('supportedFields', $supportedFields);
+        $this->template->assign('estimateFileHeaders', $estimateHeaders);
+        $this->template->assign('estimateFileData', $estimateDataResult);
 
 
-        return $this->tpl->display('EstimateImport.importMapping');
+        return $this->template->display('EstimateImport.importMapping');
     }
 
   /**

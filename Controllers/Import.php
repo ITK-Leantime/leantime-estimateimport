@@ -4,8 +4,9 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Leantime\Core\Template;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 
 /**
@@ -14,6 +15,7 @@ use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 class Import extends Controller
 {
     private ImportHelper $importHelper;
+    protected Template $template;
 
     /**
      * constructor
@@ -22,9 +24,10 @@ class Import extends Controller
      *
      * @return void
      */
-    public function init(ImportHelper $importHelper): void
+    public function init(ImportHelper $importHelper, Template $template): void
     {
         $this->importHelper = $importHelper;
+        $this->template = $template;
     }
 
     /**
@@ -40,21 +43,22 @@ class Import extends Controller
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
-        $this->tpl->assign('importStyling', $importStyling);
-        $this->tpl->assign('importScript', $importScript);
+        $this->template->assign('importStyling', $importStyling);
+        $this->template->assign('importScript', $importScript);
 
         $projectData = $this->importHelper->getAllProjectIds();
 
         // Get current project set in Leantime session
-        $currentProject = session('currentProject');;
+        $currentProject = session('currentProject');
+        ;
 
         if (isset($currentProject)) {
-            $this->tpl->assign('currentProject', $currentProject);
+            $this->template->assign('currentProject', $currentProject);
         }
 
-        $this->tpl->assign('projectData', $projectData);
+        $this->template->assign('projectData', $projectData);
 
-        return $this->tpl->display('EstimateImport.import');
+        return $this->template->display('EstimateImport.import');
     }
 
     /**

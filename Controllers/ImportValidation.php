@@ -3,7 +3,9 @@
 namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller;
+use Leantime\Core\Template;
+use Leantime\Core\Language;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Users\Services\Users;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,8 @@ class ImportValidation extends Controller
     private ImportHelper $importHelper;
     private Users $userService;
     private Projects $projectService;
+    protected Template $template;
+    protected Language $language;
 
     /**
      * constructor
@@ -33,12 +37,14 @@ class ImportValidation extends Controller
      *
      * @return void
      */
-    public function init(TicketService $ticketService, ImportHelper $importHelper, Users $userService, Projects $projectService): void
+    public function init(TicketService $ticketService, ImportHelper $importHelper, Users $userService, Projects $projectService, Template $template, Language $language): void
     {
         $this->ticketService = $ticketService;
         $this->importHelper = $importHelper;
         $this->userService = $userService;
         $this->projectService = $projectService;
+        $this->template = $template;
+        $this->language = $language;
     }
     /**
      * Gathers data and feeds it to the template.
@@ -68,30 +74,30 @@ class ImportValidation extends Controller
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
-        $this->tpl->assign('importStyling', $importStyling);
-        $this->tpl->assign('importScript', $importScript);
+        $this->template->assign('importStyling', $importStyling);
+        $this->template->assign('importScript', $importScript);
 
         // Get supported fields to display human-friendly field names
         $supportedFields = $this->importHelper->getSupportedFields();
-        $this->tpl->assign('supportedFields', $supportedFields);
+        $this->template->assign('supportedFields', $supportedFields);
 
         // Data to display
         $dataToValidate = $validatedData['data'] ?? [];
-        $this->tpl->assign('dataToValidate', $dataToValidate);
+        $this->template->assign('dataToValidate', $dataToValidate);
 
         // Previously mapped fields
         $mappings = $validatedData['mapping_data'] ?? [];
-        $this->tpl->assign('mappings', $mappings);
+        $this->template->assign('mappings', $mappings);
 
         // Warnings gathered in dataValidationCheck
         $validationWarnings = $validatedData['warnings'] ?? [];
-        $this->tpl->assign('validationWarnings', $validationWarnings);
+        $this->template->assign('validationWarnings', $validationWarnings);
 
         // Errors gathered in dataValidationCheck
         $validationErrors = $validatedData['errors'] ?? [];
-        $this->tpl->assign('validationErrors', $validationErrors);
+        $this->template->assign('validationErrors', $validationErrors);
 
-        return $this->tpl->display('EstimateImport.importValidation');
+        return $this->template->display('EstimateImport.importValidation');
     }
 
     /**
