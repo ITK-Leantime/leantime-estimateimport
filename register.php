@@ -1,6 +1,6 @@
 <?php
 
-use Leantime\Core\Events;
+use Leantime\Core\Events\EventDispatcher;
 
 /**
 * Adds a menu point for adding fixture data.
@@ -22,4 +22,4 @@ function addImportDataMenuPoint(array $menuStructure): array
     return $menuStructure;
 }
 
-Events::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures', 'addImportDataMenuPoint');
+EventDispatcher::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures', 'addImportDataMenuPoint');
