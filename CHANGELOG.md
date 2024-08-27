@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-7](https://github.com/ITK-Leantime/leantime-estimateimport/pull/7)
+  * Added compatability for Leantime 3.2
+
 ## [0.2.0] - 2024-07-31
 
 * Added assignee-project connection button
