@@ -36,7 +36,7 @@ class ImportMapping extends Controller
    */
     public function get(): Response
     {
-        $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
+        $csvDataFile = session('csv_data.temp_fileName');
 
         $csvData = $this->importHelper->getDataFromTempFile($csvDataFile);
 
@@ -65,7 +65,7 @@ class ImportMapping extends Controller
    */
     public function post(array $params): RedirectResponse
     {
-        $csvDataFile = $_SESSION['csv_data']['temp_fileName'];
+        $csvDataFile = session('csv_data.temp_fileName');
 
         // @TODO validate mapping
         $csvData['mapping_data'] = $params;

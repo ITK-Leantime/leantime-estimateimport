@@ -117,7 +117,7 @@ class Import extends Controller
         $tmpFile = $this->importHelper->saveDataToTempFile($dataToStore);
 
         // Save tmp file location to session
-        $_SESSION['csv_data']['temp_fileName'] = $tmpFile;
+        session(["csv_data.temp_fileName" => $tmpFile]);
 
         // Redirect to next step
         return new RedirectResponse('/EstimateImport/importMapping');
