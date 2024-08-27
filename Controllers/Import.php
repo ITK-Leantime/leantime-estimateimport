@@ -4,7 +4,7 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 
@@ -36,7 +36,7 @@ class Import extends Controller
      */
     public function get(): Response
     {
-        unset($_SESSION['csv_data']['temp_fileName']);
+        session()->forget('csv_data.temp_fileName');
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
@@ -46,10 +46,10 @@ class Import extends Controller
         $projectData = $this->importHelper->getAllProjectIds();
 
         // Get current project set in Leantime session
-        $currentProject = $_SESSION['currentProject'];
+        $currentProject = session('currentProject');;
 
         if (isset($currentProject)) {
-            $this->tpl->assign('currentProject', $_SESSION['currentProject']);
+            $this->tpl->assign('currentProject', $currentProject);
         }
 
         $this->tpl->assign('projectData', $projectData);
