@@ -11,7 +11,7 @@ parameters:
         - '#Constant (APP_ROOT|BASE_URL) not found.#'
         - '#Method .+ has parameter .+ with no value type specified in iterable type array.#'
         - '#Method .+ return type has no value type specified in iterable type array.#'
-        - '#^Function session not found\.$#'
+        - '#^Cannot call method forget\(\) on Leantime\\Core\\Support\\Mix\|string\.$#'
 
 # Local Variables:
 # mode: yaml
