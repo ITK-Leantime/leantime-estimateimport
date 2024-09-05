@@ -121,7 +121,7 @@ class ImportValidation extends Controller
 
         $mappings = $csvData['mapping_data'] ?? [];
         $dataToImport = $csvData['data'] ?? [];
-        $currentProject = session('currentProject') ?? $csvData['projectId'];
+        $currentProject = session('currentProject', $csvData['projectId']);
         $dateFormat = $csvData['dateFormat'] ?? 'Y-m-d';
         $dataImportConfirmation = $params['dataImportConfirmation'];
 
@@ -154,7 +154,7 @@ class ImportValidation extends Controller
                         $date = \DateTime::createFromFormat($dateFormat, $dat);
 
                         // Because of Leantimes internal "date database preparation", dates has to be formatted like datetimehelper expects
-                        $leantimeUserDateFormat = session('usersettings.language.date_format') ?? $this->language->__('language.dateformat');
+                        $leantimeUserDateFormat = session('usersettings.language.date_format', $this->language->__('language.dateformat'));
                         $values[$mappings[$key]] = $date->format($leantimeUserDateFormat);
                         break;
                     case 'editorId':
