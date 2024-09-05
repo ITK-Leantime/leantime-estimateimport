@@ -39,7 +39,7 @@ class Import extends Controller
      */
     public function get(): Response
     {
-        session()->forget("csv_data.temp_fileName");
+        session()->forget('csv_data.temp_fileName');
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
