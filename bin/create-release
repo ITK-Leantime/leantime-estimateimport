@@ -15,7 +15,7 @@ cd "$project_dir"
 
 # Configuration start
 
-plugin_name=TimeTable
+plugin_name=EstimateImport
 # Edit release-exclude.txt to exclude files and folder from release package.
 
 # Configuration end

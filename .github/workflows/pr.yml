@@ -16,7 +16,7 @@ jobs:
       - name: Check that changelog has been updated.
         run: git diff --exit-code origin/${{ github.base_ref }} -- CHANGELOG.md && exit 1 || exit 0
 
-  check-build-release:
+  check-create-release:
     runs-on: ubuntu-latest
     name: Test create release
     strategy:
