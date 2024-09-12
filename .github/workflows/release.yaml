@@ -1,43 +1,47 @@
+name: release
+
 on:
   push:
     tags:
       - '*.*.*'
+    branches:
+      - '**'
 
-name: Create Release
+permissions:
+  contents: write
 
-# @see https://github.com/ncipollo/release-action
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    env:
-      REPO_NAME: ${{ github.event.repository.name }}
-    strategy:
-      fail-fast: true
-    name: Create Release
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Get the tag/version
-        run: |
-          echo "GIT_TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-
-      - name: Create artifacts
-        run: |
-          ./bin/create-release "$GIT_TAG"
-
-      - name: Create release body
-        run: |
-          echo "# Version $GIT_TAG" > body.md
-
-      - name: Create Release
-        id: create_release
-        uses: ncipollo/release-action@v1
+      - name: Build and create release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          artifacts: "leantime-*-*.tar.gz,checksum.txt"
-          bodyFile: "body.md"
+          # https://stackoverflow.com/a/71158878/2502647
+          GH_TOKEN: ${{ github.TOKEN }}
+        run: |
+          is_prerelease=false
+          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/contexts#github-context
+          tag_name="${{ github.ref_name }}"
+          release_name="${tag_name}"
+
+          # If the type is a branch, then we do a prerelease
+          if [ "${{ github.ref_type }}" == "branch" ]; then
+            is_prerelease=true
+            # Replace everything but letters and numbers in branch name with _
+            tag_name="dev-${tag_name//[^[:alnum:]-]/_}"
+            release_name="release-${tag_name}"
+          fi
+
+          docker compose run --user root --rm php bin/create-release "$tag_name"
+
+          # Delete release if it already exists.
+          gh release view "$release_name" > /dev/null 2>&1 && gh release delete "$release_name" --yes
+          # The package name contains the tag name with any leading `dev-` removed
+          if [ "$is_prerelease" = true ]; then
+            gh release create "$release_name" --prerelease --generate-notes ./*-"${tag_name#dev-}".tar.gz checksum.txt
+          else
+            gh release create "$release_name" --generate-notes ./*-"${tag_name#dev-}".tar.gz checksum.txt
+          fi
+        shell: bash
