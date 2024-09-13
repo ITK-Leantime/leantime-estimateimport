@@ -16,8 +16,8 @@ jobs:
       - name: Check that changelog has been updated.
         run: git diff --exit-code origin/${{ github.base_ref }} -- CHANGELOG.md && exit 1 || exit 0
 
-  check-build-release:
-    runs-on: ubuntu-latest
+  check-create-release:
+    runs-on: ubuntu-24.04
     name: Test create release
     strategy:
       fail-fast: false
@@ -61,8 +61,8 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - run: |
-          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
-          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer normalize
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer install
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer normalize
 
   coding-standards-phpcs:
     name: coding-standards-check/phpcs
@@ -72,8 +72,8 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - run: |
-          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
-          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer coding-standards-check/phpcs
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer install
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer coding-standards-check/phpcs
 
   code-analysis-phpstan:
     name: code-analysis/phpstan
@@ -83,5 +83,5 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - run: |
-          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
-          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer code-analysis/phpstan
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer install
+          docker run --user root --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer code-analysis/phpstan

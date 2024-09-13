@@ -4,8 +4,9 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Leantime\Core\Template;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 
 /**
@@ -14,6 +15,7 @@ use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 class Import extends Controller
 {
     private ImportHelper $importHelper;
+    protected Template $template;
 
     /**
      * constructor
@@ -22,9 +24,10 @@ class Import extends Controller
      *
      * @return void
      */
-    public function init(ImportHelper $importHelper): void
+    public function init(ImportHelper $importHelper, Template $template): void
     {
         $this->importHelper = $importHelper;
+        $this->template = $template;
     }
 
     /**
@@ -36,25 +39,25 @@ class Import extends Controller
      */
     public function get(): Response
     {
-        unset($_SESSION['csv_data']['temp_fileName']);
+        session()->forget('csv_data.temp_fileName');
 
         $importStyling = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/css/plugin-EstimateImport.css';
         $importScript = dirname($_SERVER['DOCUMENT_ROOT'], 2) . 'dist/js/plugin-EstimateImport.js';
-        $this->tpl->assign('importStyling', $importStyling);
-        $this->tpl->assign('importScript', $importScript);
+        $this->template->assign('importStyling', $importStyling);
+        $this->template->assign('importScript', $importScript);
 
         $projectData = $this->importHelper->getAllProjectIds();
 
         // Get current project set in Leantime session
-        $currentProject = $_SESSION['currentProject'];
+        $currentProject = session('currentProject');
 
-        if (isset($currentProject)) {
-            $this->tpl->assign('currentProject', $_SESSION['currentProject']);
+        if ($currentProject) {
+            $this->template->assign('currentProject', $currentProject);
         }
 
-        $this->tpl->assign('projectData', $projectData);
+        $this->template->assign('projectData', $projectData);
 
-        return $this->tpl->display('EstimateImport.import');
+        return $this->template->display('EstimateImport.import');
     }
 
     /**
@@ -117,7 +120,7 @@ class Import extends Controller
         $tmpFile = $this->importHelper->saveDataToTempFile($dataToStore);
 
         // Save tmp file location to session
-        $_SESSION['csv_data']['temp_fileName'] = $tmpFile;
+        session(['csv_data.temp_fileName' => $tmpFile]);
 
         // Redirect to next step
         return new RedirectResponse('/EstimateImport/importMapping');
