@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - 2024-09-13
 
+* [PR-8](https://github.com/ITK-Leantime/leantime-estimateimport/pull/9)
+  * Run GA with markdown runner
+  * Update create-release script
+  * Add GA that checks if documentation has been updated
+
 * [PR-7](https://github.com/ITK-Leantime/leantime-estimateimport/pull/7)
   * Added compatability for Leantime 3.2
 

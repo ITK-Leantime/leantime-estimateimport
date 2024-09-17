@@ -36,25 +36,58 @@ bin/leantime plugin:install leantime/estimateimport --no-interaction
 bin/leantime plugin:enable leantime/estimateimport --no-interaction
 ```
 
-### Coding standards
+Run composer install
 
-``` shell
-docker run --tty --interactive --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
-docker run --tty --interactive --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer coding-standards-apply
-docker run --tty --interactive --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer coding-standards-check
+```shell name=development-install
+docker run --interactive --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer install
 ```
 
-```shell
-docker run --tty --interactive --rm --volume ${PWD}:/app node:20 yarn --cwd /app install
-docker run --tty --interactive --rm --volume ${PWD}:/app node:20 yarn --cwd /app coding-standards-apply
-docker run --tty --interactive --rm --volume ${PWD}:/app node:20 yarn --cwd /app coding-standards-check
+### Composer normalize
+
+```shell name=composer-normalize
+docker run --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer normalize
+```
+
+### Coding standards
+
+#### Check and apply with phpcs
+
+```shell name=check-coding-standards
+docker run --interactive --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer coding-standards-check
+```
+
+```shell name=apply-coding-standards
+docker run --interactive --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer coding-standards-apply
+```
+
+#### Check and apply markdownlint
+
+```shell name=markdown-check
+docker run --rm --volume $PWD:/md peterdavehello/markdownlint markdownlint --ignore vendor --ignore LICENSE.md '**/*.md'
+```
+
+```shell name=markdown-apply
+docker run --rm --volume $PWD:/md peterdavehello/markdownlint markdownlint --ignore vendor --ignore LICENSE.md '**/*.md' --fix
+```
+
+#### Check with shellcheck
+
+```shell name=shell-check
+docker run --rm --volume "$PWD:/app" --workdir /app peterdavehello/shellcheck shellcheck bin/create-release
+docker run --rm --volume "$PWD:/app" --workdir /app peterdavehello/shellcheck shellcheck bin/deploy
+docker run --rm --volume "$PWD:/app" --workdir /app peterdavehello/shellcheck shellcheck bin/local.create-release
 ```
 
 ### Code analysis
 
-```shell
-docker run --tty --interactive --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer install
-docker run --tty --interactive --rm --volume ${PWD}:/app itkdev/php8.1-fpm:latest composer code-analysis
+```shell name=code-analysis
+docker run --interactive --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest composer code-analysis
+```
+
+## Test release build
+
+```shell name=test-create-release
+docker compose build && docker compose run --rm php bin/create-release dev-test
 ```
 
 ## Release
