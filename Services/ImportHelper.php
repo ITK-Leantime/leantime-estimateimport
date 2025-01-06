@@ -190,6 +190,9 @@ class ImportHelper
 
             // Loop data and match fields names
             foreach ($data as $data_key => &$datum) {
+                if (!isset($datum[$key])) {
+                    continue;
+                }
                 if (trim($mapping_datum) === '-1') {
                     unset($datum[$key]);
                     if (empty($datum)) {
