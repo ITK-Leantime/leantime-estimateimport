@@ -4,7 +4,7 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller\Controller;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Leantime\Core\Language;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Users\Services\Users;

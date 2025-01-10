@@ -5,7 +5,7 @@ namespace Leantime\Plugins\EstimateImport\Controllers;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller\Controller;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Plugins\EstimateImport\Services\ImportHelper as ImportHelper;
 
