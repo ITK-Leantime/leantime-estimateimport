@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-14](https://github.com/ITK-Leantime/leantime-estimateimport/pull/14)
+  * Minor bugfixes
+
 ## [2.0.0] - 2025-01-10
 
 * [PR-12](https://github.com/ITK-Leantime/leantime-estimateimport/pull/12)
