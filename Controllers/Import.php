@@ -117,7 +117,15 @@ class Import extends Controller
             'dateFormat' => $params['dateFormat'],
         ];
 
+        $selectedEncoding = $params['fileEncoding'];
+        $encoding = mb_detect_encoding(json_encode($dataToStore), mb_list_encodings(), true);
+
+        if ($encoding !== $selectedEncoding) {
+            throw new Exception('Encoding of file ('.$encoding.') is not supported. Please change the encoding of your uploaded file to UTF-8.');
+        }
+
         $tmpFile = $this->importHelper->saveDataToTempFile($dataToStore);
+
 
         // Save tmp file location to session
         session(['csv_data.temp_fileName' => $tmpFile]);
