@@ -63,11 +63,11 @@ docker run --interactive --rm --volume ${PWD}:/app itkdev/php8.3-fpm:latest comp
 #### Check and apply markdownlint
 
 ```shell name=markdown-check
-docker run --rm --volume $PWD:/md peterdavehello/markdownlint markdownlint --ignore vendor --ignore LICENSE.md '**/*.md'
+docker run --rm --volume "$PWD:/md" itkdev/markdownlint '**/*.md'
 ```
 
 ```shell name=markdown-apply
-docker run --rm --volume $PWD:/md peterdavehello/markdownlint markdownlint --ignore vendor --ignore LICENSE.md '**/*.md' --fix
+docker run --rm --volume "$PWD:/md" itkdev/markdownlint '**/*.md' --fix
 ```
 
 #### Check with shellcheck
