@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * Update leantime in `composer.json``
   * Change markdown linter to itkdevs
   * Improve error handling on
+  * Remove unused `package.json` and `yarn.lock`
 
 ## [2.0.1] - 2025-01-14
 
