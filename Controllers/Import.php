@@ -121,7 +121,7 @@ class Import extends Controller
         $encoding = mb_detect_encoding(json_encode($dataToStore), mb_list_encodings(), true);
 
         if ($encoding !== $selectedEncoding) {
-            throw new Exception('Encoding of file ('.$encoding.') is not supported. Please change the encoding of your uploaded file to UTF-8.');
+            throw new Exception('Encoding of file (' . $encoding . ') is not supported. Please change the encoding of your uploaded file to UTF-8.');
         }
 
         $tmpFile = $this->importHelper->saveDataToTempFile($dataToStore);
