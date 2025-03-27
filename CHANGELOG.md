@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-16](https://github.com/ITK-Leantime/leantime-estimateimport/pull/16)
   * Update leantime in `composer.json``
   * Change markdown linter to itkdevs
-  * Improve error handling on
+  * Improve error handling
   * Remove unused `package.json` and `yarn.lock`
 
 ## [2.0.1] - 2025-01-14
