@@ -38,7 +38,7 @@
   font-size: 1rem;
 }
 .steps > .step:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   background: #e6e6e6;
@@ -54,7 +54,7 @@
   color: #6d6875;
 }
 .steps > .step.is-complete:before {
-  content: "\2713";
+  content: '\2713';
   color: #fff;
   background: var(--accent1);
   border: 2px solid var(--accent1);
@@ -160,13 +160,13 @@ h1 {
 .ticket-header > input {
   margin: auto 10px auto 10px;
 }
-label[for="dataValidated"] {
+label[for='dataValidated'] {
   display: flex;
 }
-label[for="dataValidated"] > input {
+label[for='dataValidated'] > input {
   margin: auto 5px auto 0;
 }
-label[for="dataValidated"] > span {
+label[for='dataValidated'] > span {
   color: #000;
 }
 .warning-headline,
@@ -175,13 +175,13 @@ label[for="dataValidated"] > span {
 }
 .warning-headline:after,
 .error-headline:after {
-  content: "▼";
+  content: '▼';
   font-size: 12px;
   margin-left: 5px;
 }
 .warning-headline.collapsed:after,
 .error-headline.collapsed:after {
-  content: "▲";
+  content: '▲';
 }
 
 #warningCollapse > div,
