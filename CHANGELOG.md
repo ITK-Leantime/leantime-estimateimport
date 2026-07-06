@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-17](https://github.com/ITK-Leantime/leantime-estimateimport/pull/17)
+  * Normalize scaffolding.
 * [PR-16](https://github.com/ITK-Leantime/leantime-estimateimport/pull/16)
   * Update leantime in `composer.json``
   * Change markdown linter to itkdevs
